@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Ant-Version: Apache Ant 1.8.2
+Created-By: lerno
+Sealed: true
+
+Name: naga
+Specification-Title: Xmlwise
+Specification-Version: 1.2
+Specification-Vendor: Xmlwise
+Implementation-Title: xmlwise
+Implementation-Version: Build 12 June 13 2012
+Implementation-Vendor: Xmlwise
+
