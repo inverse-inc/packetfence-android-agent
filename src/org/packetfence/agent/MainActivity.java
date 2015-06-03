@@ -1,17 +1,30 @@
 package org.packetfence.agent;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URLConnection;
 import java.security.KeyManagementException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
+import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,16 +48,25 @@ import org.apache.http.protocol.HTTP;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.os.Environment;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.Toast;
 import xmlwise.*;
+import android.security.KeyChain;
+
+import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
 
@@ -54,7 +76,23 @@ public class MainActivity extends Activity {
 	public static int EAPTYPE_PEAP = 25;
 	public static int EAPTYPE_EAP_FAST = 43;
 	public static boolean done_configuring = false;
-	
+	private HashMap profile;
+	private String userP12Name;
+	private byte[] userP12;
+	private String caIssuer;
+	private String caCrtName;
+	private byte[] caCrt;
+	private String tlsSSID;
+	private String tlsUsername;
+	private Context context;
+
+	private PrivateKey userPrivateKey;
+	private java.security.cert.X509Certificate userCertificate;
+	private java.security.cert.X509Certificate caCertificate;
+
+	private static final int FLOW_CA = 20;
+
+	private static final int api_version = Build.VERSION.SDK_INT;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +111,7 @@ public class MainActivity extends Activity {
 	 * 
 	 */
 	public void configure(View view) throws KeyManagementException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, IOException {
-
+		context = view.getContext();
 		ByteArrayOutputStream content;
 
 		final ProgressDialog myPd_ring = ProgressDialog.show(MainActivity.this,
@@ -137,7 +175,7 @@ public class MainActivity extends Activity {
 		
         HttpGet request = new HttpGet("https://www.packetfence.org/profile.xml");
         request.setHeader("User-Agent", "Android/PacketFence Configuration Agent");
-        
+
         ByteArrayOutputStream content = null;
         
         try {
@@ -170,6 +208,27 @@ public class MainActivity extends Activity {
         
         return content;
 	}
+
+	private void configureCertificates(){
+		computeCaCert();
+		computeUserCertAndKey();
+
+		// On Android 5 we make the user install the certificate to unlock access to the storage
+		// This will callback to the configuration of the TLS profile
+		// (kind of Javascript in Java) - Android is evil
+		if(api_version > 19) {
+			configureCaCertificate();
+		}
+		else{
+			configureWirelessConnectionWPA2TLS(tlsSSID, tlsUsername);
+			done_configuring = true;
+		}
+
+	}
+
+	private void configureCaCertificate(){
+		installCertificate(this.caCrtName, this.caCrt, false, FLOW_CA);
+	}
 	
 	/*
 	 * 
@@ -180,61 +239,175 @@ public class MainActivity extends Activity {
 
 			ArrayList<?> category = (ArrayList<?>) hashMap
 					.get("PayloadContent");
+			this.profile = hashMap;
 
 			Object categoryObj[];
 			categoryObj = category.toArray();
 
-			for (int i = 0; i < categoryObj.length; i++) {
-				HashMap<?, ?> subHashMap = (HashMap<?, ?>) categoryObj[i];
+			// First one contains the general configuration
+			HashMap<?, ?> generalConfig = (HashMap<?, ?>) categoryObj[0];
 
-				String ssid = (String) subHashMap.get("SSID_STR");
+			String ssid = (String) generalConfig.get("SSID_STR");
 
-				// We first clear any previous configuration for the SSID
-				clearConfiguration(ssid);
+			System.out.println("SSID : "+ssid);
 
-				String encryptionType = (String) subHashMap
-						.get("EncryptionType");
+			// We first clear any previous configuration for the SSID
+			clearConfiguration(ssid);
 
-				//
-				// Values are: WPA (PEAP, PSK), WEP
-				//
-				// We first handle WEP
-				if (encryptionType.equalsIgnoreCase("WEP")) {
-					String psk = (String) subHashMap.get("Password");
-					configureWirelessConnectionWEP(ssid, psk);
-				}
-				// Now handle WPA (PEAP and PSK)
-				else if (encryptionType.equalsIgnoreCase("WPA")) {
-					HashMap<?, ?> eapClientConfigurationHashMap = (HashMap<?, ?>) subHashMap
-							.get("EAPClientConfiguration");
+			String encryptionType = (String) generalConfig
+					.get("EncryptionType");
 
-					// Handling WPA-PEAP
-					if (eapClientConfigurationHashMap != null) {
+			System.out.println("encryption type : "+encryptionType);
+
+			//
+			// Values are: WPA (PEAP, PSK), WEP
+			//
+			// We first handle WEP
+			if (encryptionType.equalsIgnoreCase("WEP")) {
+				String psk = (String) generalConfig.get("Password");
+				configureWirelessConnectionWEP(ssid, psk);
+				done_configuring = true;
+			}
+			// Now handle WPA (PEAP and PSK)
+			else if (encryptionType.equalsIgnoreCase("WPA")) {
+				HashMap<?, ?> eapClientConfigurationHashMap = (HashMap<?, ?>) generalConfig
+						.get("EAPClientConfiguration");
+
+				// Handling WPA-PEAP and EAP-TLS
+				if (eapClientConfigurationHashMap != null) {
+					System.out.println("Detected WPA EAP configuration");
+					ArrayList<?> eapTypes = (ArrayList<?>) eapClientConfigurationHashMap
+							.get("AcceptEAPTypes");
+
+					if(eapTypes.contains(Integer.valueOf(EAPTYPE_TLS))){
+						System.out.println("Detected WPA EAP-TLS configuration");
+
+
+						// We skip the first section
+						for (int i = 1; i < categoryObj.length; i++) {
+							HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
+							String payloadType = (String)(config.get("PayloadType"));
+							if ( payloadType.equals("com.apple.security.root")){
+								System.out.println("Found root certificate");
+								String caBytes = (String)config.get("PayloadContent");
+
+								String filename = "ca.crt";
+								FileOutputStream outputStream;
+								File file = new File(context.getExternalFilesDir(
+										Environment.DIRECTORY_DOWNLOADS), filename);
+
+								try {
+									String caCrtNoHead = new String(caBytes);
+									String caCrtStr = "";
+									caCrtStr += "-----BEGIN CERTIFICATE-----\n";
+									caCrtStr += caCrtNoHead;
+									caCrtStr += "\n" +
+											"-----END CERTIFICATE-----";
+
+									this.caCrt = caCrtStr.getBytes();
+									this.caCrtName = (String) config.get("PayloadIdentifier");
+									this.caCrtName = this.caCrtName.replace('.', '-');
+									outputStream = new FileOutputStream(file);
+									outputStream.write(caCrt);
+									outputStream.close();
+
+
+								} catch (Exception e) {
+									System.out.println("Could not write cert.");
+									e.printStackTrace();
+								}
+								System.out.println("Wrote CA to "+file.getAbsolutePath());
+							}
+							if( payloadType.equals("com.apple.security.pkcs12")){
+								System.out.println("Found the EAP-TLS p12 certificate");
+								String p12BytesB64 = (String)config.get("PayloadContent");
+								byte[] p12Bytes = Base64.decode(p12BytesB64.getBytes(), Base64.DEFAULT);
+
+								String filename = "cert.p12";
+								FileOutputStream outputStream;
+								File file = new File(context.getExternalFilesDir(
+										Environment.DIRECTORY_DOWNLOADS), filename);
+
+								try {
+									this.userP12 = p12Bytes;
+									this.userP12Name = (String) config.get("PayloadDisplayName");
+									this.tlsUsername = (String) config.get("PayloadCertificateFileName");
+									this.tlsSSID = ssid;
+									outputStream = new FileOutputStream(file);
+									outputStream.write(userP12);
+									outputStream.close();
+								} catch (Exception e) {
+									System.out.println("Could not write cert. "+e.getMessage());
+									e.printStackTrace();
+								}
+								System.out.println("Wrote p12 cert to "+file.getAbsolutePath());
+							}
+						}
+
+						//parsing done we fire the cert install
+						//the rest of the flow is handled by callbacks after the activities
+						//looks like Android is a wanabe Javascript
+						// We do not see done_configuring here as the callback will do it for us
+						configureCertificates();
+
+					}
+					else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
+						System.out.println("Detected WPA EAP-PEAP configuration");
 						String username = (String) eapClientConfigurationHashMap
 								.get("UserName");
 						String password = (String) eapClientConfigurationHashMap
 								.get("UserPassword");
-						ArrayList<?> eapTypes = (ArrayList<?>) eapClientConfigurationHashMap
-								.get("AcceptEAPTypes");
 
-						if (eapTypes.contains( Integer.valueOf(EAPTYPE_PEAP)) ) {
-							configureWirelessConnectionWPA2PEAP(ssid, username, password);
-						}
+						System.out.println("Configuring " + ssid + " with username " + username + " and password " + password);
 
-
+						configureWirelessConnectionWPA2PEAP(ssid, username, password);
+						done_configuring = true;
 					}
-					// Handling WPA-PSK
-					else {
-						String psk = (String) subHashMap.get("Password");
-						configureWirelessConnectionWPAPSK(ssid, psk);
-					}
+
+
 				}
-
+				// Handling WPA-PSK
+				else {
+					String psk = (String) generalConfig.get("Password");
+					configureWirelessConnectionWPAPSK(ssid, psk);
+					done_configuring = true;
+				}
 			}
 
 		} catch (XmlParseException e) {
 			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
 			.show();
+		}
+	}
+
+	public void installCertificate(String displayName, byte[] certificate, boolean isPkcs12, int FLOW_CODE){
+		Intent installIntent = KeyChain.createInstallIntent();
+		try {
+			if(isPkcs12){
+				installIntent.putExtra(KeyChain.EXTRA_PKCS12, certificate);
+
+			}
+			else {
+				X509Certificate x509 = X509Certificate.getInstance(certificate);
+				caIssuer = x509.getIssuerDN().getName();
+				installIntent.putExtra(KeyChain.EXTRA_CERTIFICATE, x509.getEncoded());
+			}
+		}
+		catch(Exception e){
+			Toast.makeText(this, "error while parsing certificate:" + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+		}
+		installIntent.putExtra(KeyChain.EXTRA_NAME, displayName);
+
+		startActivityForResult(installIntent, FLOW_CODE);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if(requestCode == FLOW_CA){
+			configureWirelessConnectionWPA2TLS(this.tlsSSID, this.tlsUsername);
+			done_configuring = true;
 		}
 	}
 	
@@ -322,6 +495,145 @@ public class MainActivity extends Activity {
 			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
 					.show();
 		}
+	}
+
+	public void computeUserCertAndKey() {
+		KeyStore p12 = null;
+		try {
+			p12 = KeyStore.getInstance("pkcs12");
+			try {
+				p12.load(new ByteArrayInputStream(this.userP12), "123".toCharArray());
+			} catch (IOException e) {
+				e.printStackTrace();
+				Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+						.show();
+			} catch (NoSuchAlgorithmException e) {
+				e.printStackTrace();
+				Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+						.show();
+			} catch (CertificateException e) {
+				e.printStackTrace();
+				Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+						.show();
+			}
+
+			Enumeration e = p12.aliases();
+			while (e.hasMoreElements()) {
+				String alias = (String) e.nextElement();
+				this.userCertificate = (java.security.cert.X509Certificate) p12.getCertificate(alias);
+				this.userPrivateKey = (PrivateKey)p12.getKey(alias, "123".toCharArray());
+				Principal subject = this.userCertificate.getSubjectDN();
+				String subjectArray[] = subject.toString().split(",");
+				for (String s : subjectArray) {
+					String[] str = s.trim().split("=");
+					String zikey = str[0];
+					String value = str[1];
+					System.out.println(zikey + " - " + value);
+				}
+			}
+		} catch (KeyStoreException e) {
+			e.printStackTrace();
+			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+		} catch (UnrecoverableKeyException e) {
+			e.printStackTrace();
+			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+		}
+	}
+
+	public void computeCaCert()
+	{
+		InputStream is = new ByteArrayInputStream(caCrt);
+
+		BufferedInputStream bis = new BufferedInputStream(is);
+
+		CertificateFactory cf = null;
+		try {
+			cf = CertificateFactory.getInstance("X.509");
+		} catch (java.security.cert.CertificateException e) {
+			e.printStackTrace();
+			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+		}
+
+		try {
+			while (bis.available() > 0) {
+				this.caCertificate = (java.security.cert.X509Certificate) cf.generateCertificate(bis);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+		} catch (java.security.cert.CertificateException e) {
+			e.printStackTrace();
+			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
+					.show();
+		}
+
+		try {
+			bis.close();
+			is.close();
+		} catch (IOException e) {
+			// If this fails, it isn't the end of the world.
+			e.printStackTrace();
+		}
+
+	}
+
+
+	public void configureWirelessConnectionWPA2TLS(String ssid, String username){
+		WifiManager mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+		WifiConfiguration mWifiConfig = new WifiConfiguration();
+		WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
+
+		if(userPrivateKey == null || userCertificate == null || caCertificate == null){
+			Toast.makeText(this, "error: There was an error retrieving the certificates", Toast.LENGTH_LONG).show();
+		}
+
+		/*Key Mgmnt*/
+		mWifiConfig.allowedKeyManagement.clear();
+		mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.IEEE8021X);
+		mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
+
+    	/*Group Ciphers*/
+		mWifiConfig.allowedGroupCiphers.clear();
+		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+
+   		/*Pairwise ciphers*/
+		mWifiConfig.allowedPairwiseCiphers.clear();
+		mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+		mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+
+    	/*Protocols*/
+		mWifiConfig.allowedProtocols.clear();
+		mWifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+		mWifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+
+
+		mWifiConfig.networkId = -1;
+		mWifiConfig.SSID = '"'+ssid+'"';
+		mWifiConfig.enterpriseConfig = mEnterpriseConfig;
+
+		mEnterpriseConfig.setIdentity(username);
+		mEnterpriseConfig.setPassword("test");
+		mEnterpriseConfig.setCaCertificate(this.caCertificate);
+		mEnterpriseConfig.setClientKeyEntry(this.userPrivateKey, this.userCertificate);
+
+		mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.NONE);
+		mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TLS);
+
+		System.out.println(mWifiConfig.toString());
+
+		enableWifiConfiguration(mWifiConfig, true);
 	}
 	
 	/*
@@ -457,7 +769,7 @@ public class MainActivity extends Activity {
 	        if(!noEnterpriseFieldType) {
                  wcefSetValue.invoke(wcefCaCert.get(selectedConfig), INT_CA_CERT);
                  retval = (String)wcefGetValue.invoke(wcefCaCert.get(selectedConfig), null);
-                 //Toast.makeText(this, "INT_CA_CERT: " + retval, Toast.LENGTH_LONG).show(); 
+                 //Toast.makeText(this, "INT_CA_CERT: " + retval, Toast.LENGTH_LONG).show();
              }
 			
 			// Private key
@@ -509,6 +821,8 @@ public class MainActivity extends Activity {
 		
 		if (userName == null || userName.trim().length() == 0) {
 			Intent wifiIntent;
+
+			System.out.println("Starting Wifi intent");
 			
 			Toast.makeText(this, "Please select the  "+ ssid + " SSID to complete the configuration.", Toast.LENGTH_LONG)
 			.show();
@@ -530,18 +844,23 @@ public class MainActivity extends Activity {
 	public void enableWifiConfiguration(WifiConfiguration config, boolean connect) {
 		WifiManager wifi = (WifiManager) getSystemService(WIFI_SERVICE);
 
-		int ret;
-		
-		ret = wifi.addNetwork(config);
-		
+		int id = wifi.addNetwork(config);
+		if (id < 0) {
+			System.out.println("Error creating new network.");
+			Toast.makeText(this, "error: Cannot create the new network", Toast.LENGTH_LONG)
+					.show();
+		} else {
+			System.out.println("Created network with ID of " + id);
+		}
+
 		if (connect) {
-	    	wifi.enableNetwork(ret, false);   
+	    	wifi.enableNetwork(id, false);
 		}
 		
 	    wifi.saveConfiguration();
 	    
 	    if (connect) {
-	    	wifi.enableNetwork(ret, true);
+	    	wifi.enableNetwork(id, true);
 	    }
 	}
 	
