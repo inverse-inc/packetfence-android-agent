@@ -291,22 +291,26 @@ public class MainActivity extends Activity {
 								System.out.println("Found root certificate");
 								String caBytes = (String)config.get("PayloadContent");
 
+								String caCrtNoHead = new String(caBytes);
+								String caCrtStr = "";
+								caCrtStr += "-----BEGIN CERTIFICATE-----\n";
+								caCrtStr += caCrtNoHead;
+								caCrtStr += "\n" +
+										"-----END CERTIFICATE-----";
+
+								this.caCrt = caCrtStr.getBytes();
+								this.caCrtName = (String) config.get("PayloadIdentifier");
+								this.caCrtName = this.caCrtName.replace('.', '-');
+
+								/*
 								String filename = "ca.crt";
 								FileOutputStream outputStream;
 								File file = new File(context.getExternalFilesDir(
 										Environment.DIRECTORY_DOWNLOADS), filename);
 
 								try {
-									String caCrtNoHead = new String(caBytes);
-									String caCrtStr = "";
-									caCrtStr += "-----BEGIN CERTIFICATE-----\n";
-									caCrtStr += caCrtNoHead;
-									caCrtStr += "\n" +
-											"-----END CERTIFICATE-----";
 
-									this.caCrt = caCrtStr.getBytes();
-									this.caCrtName = (String) config.get("PayloadIdentifier");
-									this.caCrtName = this.caCrtName.replace('.', '-');
+
 									outputStream = new FileOutputStream(file);
 									outputStream.write(caCrt);
 									outputStream.close();
@@ -317,22 +321,26 @@ public class MainActivity extends Activity {
 									e.printStackTrace();
 								}
 								System.out.println("Wrote CA to "+file.getAbsolutePath());
+								*/
 							}
 							if( payloadType.equals("com.apple.security.pkcs12")){
 								System.out.println("Found the EAP-TLS p12 certificate");
 								String p12BytesB64 = (String)config.get("PayloadContent");
 								byte[] p12Bytes = Base64.decode(p12BytesB64.getBytes(), Base64.DEFAULT);
 
+								this.userP12 = p12Bytes;
+								this.userP12Name = (String) config.get("PayloadDisplayName");
+								this.tlsUsername = (String) config.get("PayloadCertificateFileName");
+								this.tlsSSID = ssid;
+
+								/*
 								String filename = "cert.p12";
 								FileOutputStream outputStream;
 								File file = new File(context.getExternalFilesDir(
 										Environment.DIRECTORY_DOWNLOADS), filename);
 
 								try {
-									this.userP12 = p12Bytes;
-									this.userP12Name = (String) config.get("PayloadDisplayName");
-									this.tlsUsername = (String) config.get("PayloadCertificateFileName");
-									this.tlsSSID = ssid;
+
 									outputStream = new FileOutputStream(file);
 									outputStream.write(userP12);
 									outputStream.close();
@@ -340,7 +348,7 @@ public class MainActivity extends Activity {
 									System.out.println("Could not write cert. "+e.getMessage());
 									e.printStackTrace();
 								}
-								System.out.println("Wrote p12 cert to "+file.getAbsolutePath());
+								System.out.println("Wrote p12 cert to "+file.getAbsolutePath());*/
 							}
 						}
 
@@ -783,7 +791,7 @@ public class MainActivity extends Activity {
 			if (userName != null && userName.trim().length() > 0 && !noEnterpriseFieldType) {
 				wcefSetValue.invoke(wcefIdentity.get(selectedConfig), userName);
 				retval = (String)wcefGetValue.invoke(wcefIdentity.get(selectedConfig), null);
-				//Toast.makeText(this, "userName " + retval, Toast.LENGTH_LONG).show(); 
+				//Toast.makeText(this, "userName " + retval, Toast.LENGTH_LONG).show();
 			}
 
 			// Password
