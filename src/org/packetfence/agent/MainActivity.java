@@ -46,7 +46,9 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
@@ -62,6 +64,7 @@ import android.view.Menu;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import xmlwise.*;
 import android.security.KeyChain;
@@ -79,6 +82,7 @@ public class MainActivity extends Activity {
 	private HashMap profile;
 	private String userP12Name;
 	private byte[] userP12;
+	private String userP12Pass;
 	private String caIssuer;
 	private String caCrtName;
 	private byte[] caCrt;
@@ -173,7 +177,8 @@ public class MainActivity extends Activity {
 
         HttpClient client = new DefaultHttpClient(ccm, params);
 		
-        HttpGet request = new HttpGet("https://www.packetfence.org/profile.xml");
+        //HttpGet request = new HttpGet("https://www.packetfence.org/profile.xml");
+		HttpGet request = new HttpGet("http://172.20.20.109/content/tls.mobileconfig");
         request.setHeader("User-Agent", "Android/PacketFence Configuration Agent");
 
         ByteArrayOutputStream content = null;
@@ -356,7 +361,7 @@ public class MainActivity extends Activity {
 						//the rest of the flow is handled by callbacks after the activities
 						//looks like Android is a wanabe Javascript
 						// We do not see done_configuring here as the callback will do it for us
-						configureCertificates();
+						promptUserPassword();
 
 					}
 					else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
@@ -505,12 +510,32 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	public void promptUserPassword() {
+		AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+		alert.setTitle("Certificate password");
+		alert.setMessage("Enter the password to unlock your certificate.");
+
+		// Set an EditText view to get user input
+		final EditText input = new EditText(this);
+		alert.setView(input);
+
+		alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				MainActivity.this.userP12Pass = input.getText().toString();
+				configureCertificates();
+			}
+		});
+
+		alert.show();
+	}
+
 	public void computeUserCertAndKey() {
 		KeyStore p12 = null;
 		try {
 			p12 = KeyStore.getInstance("pkcs12");
 			try {
-				p12.load(new ByteArrayInputStream(this.userP12), "123".toCharArray());
+				p12.load(new ByteArrayInputStream(this.userP12), this.userP12Pass.toCharArray());
 			} catch (IOException e) {
 				e.printStackTrace();
 				Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
@@ -529,7 +554,7 @@ public class MainActivity extends Activity {
 			while (e.hasMoreElements()) {
 				String alias = (String) e.nextElement();
 				this.userCertificate = (java.security.cert.X509Certificate) p12.getCertificate(alias);
-				this.userPrivateKey = (PrivateKey)p12.getKey(alias, "123".toCharArray());
+				this.userPrivateKey = (PrivateKey)p12.getKey(alias, this.userP12Pass.toCharArray());
 				Principal subject = this.userCertificate.getSubjectDN();
 				String subjectArray[] = subject.toString().split(",");
 				for (String s : subjectArray) {
@@ -859,6 +884,8 @@ public class MainActivity extends Activity {
 					.show();
 		} else {
 			System.out.println("Created network with ID of " + id);
+			Toast.makeText(this, "Success ! Created new network !", Toast.LENGTH_LONG)
+					.show();
 		}
 
 		if (connect) {
