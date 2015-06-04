@@ -306,27 +306,6 @@ public class MainActivity extends Activity {
 								this.caCrt = caCrtStr.getBytes();
 								this.caCrtName = (String) config.get("PayloadIdentifier");
 								this.caCrtName = this.caCrtName.replace('.', '-');
-
-								/*
-								String filename = "ca.crt";
-								FileOutputStream outputStream;
-								File file = new File(context.getExternalFilesDir(
-										Environment.DIRECTORY_DOWNLOADS), filename);
-
-								try {
-
-
-									outputStream = new FileOutputStream(file);
-									outputStream.write(caCrt);
-									outputStream.close();
-
-
-								} catch (Exception e) {
-									System.out.println("Could not write cert.");
-									e.printStackTrace();
-								}
-								System.out.println("Wrote CA to "+file.getAbsolutePath());
-								*/
 							}
 							if( payloadType.equals("com.apple.security.pkcs12")){
 								System.out.println("Found the EAP-TLS p12 certificate");
@@ -337,23 +316,6 @@ public class MainActivity extends Activity {
 								this.userP12Name = (String) config.get("PayloadDisplayName");
 								this.tlsUsername = (String) config.get("PayloadCertificateFileName");
 								this.tlsSSID = ssid;
-
-								/*
-								String filename = "cert.p12";
-								FileOutputStream outputStream;
-								File file = new File(context.getExternalFilesDir(
-										Environment.DIRECTORY_DOWNLOADS), filename);
-
-								try {
-
-									outputStream = new FileOutputStream(file);
-									outputStream.write(userP12);
-									outputStream.close();
-								} catch (Exception e) {
-									System.out.println("Could not write cert. "+e.getMessage());
-									e.printStackTrace();
-								}
-								System.out.println("Wrote p12 cert to "+file.getAbsolutePath());*/
 							}
 						}
 
@@ -559,9 +521,9 @@ public class MainActivity extends Activity {
 				String subjectArray[] = subject.toString().split(",");
 				for (String s : subjectArray) {
 					String[] str = s.trim().split("=");
-					String zikey = str[0];
+					String key = str[0];
 					String value = str[1];
-					System.out.println(zikey + " - " + value);
+					System.out.println(key + " - " + value);
 				}
 			}
 		} catch (KeyStoreException e) {
@@ -634,7 +596,7 @@ public class MainActivity extends Activity {
 		mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.IEEE8021X);
 		mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
 
-    	/*Group Ciphers*/
+		/*Group Ciphers*/
 		mWifiConfig.allowedGroupCiphers.clear();
 		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
 		mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
@@ -646,7 +608,7 @@ public class MainActivity extends Activity {
 		mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
 		mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
 
-    	/*Protocols*/
+		/*Protocols*/
 		mWifiConfig.allowedProtocols.clear();
 		mWifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 		mWifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
@@ -832,18 +794,6 @@ public class MainActivity extends Activity {
 				retval = (String)wcefGetValue.invoke(wcefClientCert.get(selectedConfig), null);
 				//Toast.makeText(this, "ENTERPRISE_CLIENT_CERT " + retval, Toast.LENGTH_LONG).show();
 			}
-			// try{
-			// Field wcAdhoc = WifiConfiguration.class.getField("adhocSSID");
-			// Field wcAdhocFreq =
-			// WifiConfiguration.class.getField("frequency");
-			//
-			// wcAdhoc.setBoolean(selectedConfig, false);
-			// int freq = 2462;
-			// wcAdhocFreq.setInt(selectedConfig, freq);
-			// } catch (Exception e)
-			// {
-			// e.printStackTrace();
-			// }
 
 		} catch (Exception e) {
 			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
