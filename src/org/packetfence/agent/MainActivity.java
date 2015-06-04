@@ -177,8 +177,7 @@ public class MainActivity extends Activity {
 
         HttpClient client = new DefaultHttpClient(ccm, params);
 		
-        //HttpGet request = new HttpGet("https://www.packetfence.org/profile.xml");
-		HttpGet request = new HttpGet("http://172.20.20.109/content/tls.mobileconfig");
+        HttpGet request = new HttpGet("https://www.packetfence.org/profile.xml");
         request.setHeader("User-Agent", "Android/PacketFence Configuration Agent");
 
         ByteArrayOutputStream content = null;
