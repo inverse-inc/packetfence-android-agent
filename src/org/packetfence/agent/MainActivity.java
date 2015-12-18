@@ -806,7 +806,7 @@ public class MainActivity extends Activity {
 
 			System.out.println("Starting Wifi intent");
 			
-			Toast.makeText(this, "Please select the  "+ ssid + " SSID to complete the configuration.", Toast.LENGTH_LONG)
+			Toast.makeText(this, "Please edit the  "+ ssid + " SSID settings and input your username(identity) and password.", Toast.LENGTH_LONG)
 			.show();
 			
 			wifiIntent = new Intent(WifiManager.ACTION_PICK_WIFI_NETWORK);
