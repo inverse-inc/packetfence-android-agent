@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28">
+        <dex dex="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-19.1.0_4c42989c6ff4d7dc8856ff4d638fc2e428d56d3c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/jsemaan/Android/Sdk/extras/android/m2repository/com/android/support/support-v4/19.1.0/support-v4-19.1.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
+        <dex dex="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/pre-dexed/debug/support-v4-19.1.0_544b64eabf635f426997837b6d831b05b1ddcf35.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="1acf2452d6865190cdc1cc0e4400bc384b1d627b">
+        <dex dex="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/pre-dexed/debug/instant-run-bootstrap_2d779bcbb1aec2c91ea81fc79601a19efdc5bd2a.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a07e2aa70c08ac1fb8a5dbf6cc85f0c40c871504">
+        <dex dex="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/pre-dexed/debug/instant-run_e53fcd5e75f4a17fc88f5de910de70836bf8666b.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/home/jsemaan/StudioProjects/packetfence-android-agent/libs/xmlwise-1_2.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.0"
+        sha1="82ed648273281ccd08da6f91df30573edf15185d">
+        <dex dex="/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/pre-dexed/debug/xmlwise-1_2_e4ea4acc16a530b2a9fed2ec772981ac408fc8a8.jar" />
+    </item>
+
+</items>

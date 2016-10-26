@@ -1,0 +1,4 @@
+#Wed Oct 26 15:47:25 EDT 2016
+base.0=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/1f/main
+renamed.0=classes.dex
+file.0=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/1f/main/classes.dex
