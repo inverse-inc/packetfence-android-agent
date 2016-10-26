@@ -276,11 +276,11 @@
         "source": "/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/res/drawable-xhdpi/abc_ab_bottom_solid_dark_holo.9.png"
     },
     {
-        "merged": "/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/res/merged/debug/drawable-xhdpi/abc_ic_ab_back_holo_light.png",
-        "source": "/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/res/drawable-xhdpi/abc_ic_ab_back_holo_light.png"
-    },
-    {
         "merged": "/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/res/merged/debug/drawable-xhdpi/abc_ic_search.png",
         "source": "/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/res/drawable-xhdpi/abc_ic_search.png"
+    },
+    {
+        "merged": "/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/res/merged/debug/drawable-xhdpi/abc_ic_ab_back_holo_light.png",
+        "source": "/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/exploded-aar/com.android.support/appcompat-v7/19.1.0/res/drawable-xhdpi/abc_ic_ab_back_holo_light.png"
     }
 ]

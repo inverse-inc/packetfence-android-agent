@@ -69,6 +69,13 @@ import android.widget.Toast;
 import xmlwise.*;
 import android.security.KeyChain;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
@@ -118,6 +125,7 @@ public class MainActivity extends Activity {
 		context = view.getContext();
 		ByteArrayOutputStream content;
 
+
 		final ProgressDialog myPd_ring = ProgressDialog.show(MainActivity.this,
 				"Please wait", "Configuring...", true);
 		myPd_ring.setCancelable(false);
@@ -139,78 +147,53 @@ public class MainActivity extends Activity {
 			}
 		}).start();
 
-		content = fetchXML();
+		fetchXML();
+	}
 
+	public void fetchXML() {
+		String content;
+		NukeSSLCerts.nuke();
+		final Activity view = this;
+		StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://172.20.20.63:8000/wireless-profile.mobileconfig",
+				new Response.Listener<String>() {
+					@Override
+					public void onResponse(String response) {
+						Toast.makeText(view, "Downloaded profile successfully", Toast.LENGTH_LONG)
+								.show();
+						fetchXMLCallback(response);
+					}
+				}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if(error.networkResponse == null) {
+					Toast.makeText(view, "Network error: " + error.getLocalizedMessage(), Toast.LENGTH_LONG)
+							.show();
+				}
+				else if(error.networkResponse.statusCode == 404) {
+					Toast.makeText(view, "Profile not found on server.", Toast.LENGTH_LONG)
+							.show();
+				}
+				else {
+					Toast.makeText(view, "Error fetching profile ", Toast.LENGTH_LONG)
+							.show();
+				}
+			}
+		});
+		RequestQueue queue = Volley.newRequestQueue(this);
+		queue.add(stringRequest);
+	}
+
+	public void fetchXMLCallback(String content) {
 		if (content != null) {
-			parseXML(new String(content.toByteArray()));
+			parseXML(content);
 
 			Button b = (Button) findViewById(R.id.button1);
 			b.setEnabled(false);
 		} else {
-			Toast.makeText(this, "Unable to fetch configuration profile.", Toast.LENGTH_LONG).show(); 
+			Toast.makeText(this, "Unable to fetch configuration profile.", Toast.LENGTH_LONG).show();
 		}
-		
+
 		done_configuring = true;
-	}
-	
-	
-	/*
-	 * 
-	 */
-	public ByteArrayOutputStream fetchXML() throws KeyStoreException, KeyManagementException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, IOException{
-        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        trustStore.load(null, null);
-
-        CustomSSLSocketFactory sf = new CustomSSLSocketFactory(trustStore);
-        //sf.setHostnameVerifier(
-        //       SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
-        HttpParams params = new BasicHttpParams();
-        HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-        HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        registry.register(new Scheme("https", (SocketFactory) sf, 443));
-
-        ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
-
-        HttpClient client = new DefaultHttpClient(ccm, params);
-		
-        HttpGet request = new HttpGet("https://www.packetfence.org/profile.xml");
-        request.setHeader("User-Agent", "Android/PacketFence Configuration Agent");
-
-        ByteArrayOutputStream content = null;
-        
-        try {
-            HttpResponse response = client.execute(request);
-
-            // Check if server response is valid
-            StatusLine status = response.getStatusLine();
-            if (status.getStatusCode() != 200) {
-                throw new IOException("Invalid response from server: " + status.toString());
-            }
-
-            // Pull content stream from response
-            HttpEntity entity = response.getEntity();
-            InputStream inputStream = entity.getContent();
-
-            content = new ByteArrayOutputStream();
-
-            // Read response into a buffered stream
-            int readBytes = 0;
-            byte[] sBuffer = new byte[512];
-            while ((readBytes = inputStream.read(sBuffer)) != -1) {
-                content.write(sBuffer, 0, readBytes);
-            }
-            
-        } catch (IOException e) {
-			Toast.makeText(this, "error:" + e.getMessage(), Toast.LENGTH_LONG)
-			.show();
-            content = null;
-         }
-        
-        return content;
 	}
 
 	private void configureCertificates(){
@@ -629,11 +612,56 @@ public class MainActivity extends Activity {
 
 		enableWifiConfiguration(mWifiConfig, true);
 	}
-	
+
+    public void configureWirelessConnectionWPA2PEAP(String ssid, String username, String password){
+        WifiManager mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+        WifiConfiguration mWifiConfig = new WifiConfiguration();
+        WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
+
+		/*Key Mgmnt*/
+        mWifiConfig.allowedKeyManagement.clear();
+        mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.IEEE8021X);
+        mWifiConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_EAP);
+
+		/*Group Ciphers*/
+        mWifiConfig.allowedGroupCiphers.clear();
+        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+        mWifiConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+
+   		/*Pairwise ciphers*/
+        mWifiConfig.allowedPairwiseCiphers.clear();
+        mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        mWifiConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+
+		/*Protocols*/
+        mWifiConfig.allowedProtocols.clear();
+        mWifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+        mWifiConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+
+
+        mWifiConfig.networkId = -1;
+        mWifiConfig.SSID = '"'+ssid+'"';
+        mWifiConfig.enterpriseConfig = mEnterpriseConfig;
+
+        mEnterpriseConfig.setIdentity(username);
+        mEnterpriseConfig.setAnonymousIdentity(username);
+        mEnterpriseConfig.setPassword(null);
+
+        mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
+        mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
+
+        System.out.println(mWifiConfig.toString());
+
+        enableWifiConfiguration(mWifiConfig, true);
+    }
+
 	/*
 	 * 
 	 */
-	public void configureWirelessConnectionWPA2PEAP(String ssid,
+	public void configureWirelessConnectionWPA2PEAPOLD(String ssid,
 			String userName, String password) {
 
 		final String INT_PRIVATE_KEY = "private_key";

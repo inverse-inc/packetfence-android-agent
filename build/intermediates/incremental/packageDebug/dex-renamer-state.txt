@@ -1,4 +1,7 @@
-#Wed Oct 26 15:47:25 EDT 2016
-base.0=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/1f/main
-renamed.0=classes.dex
-file.0=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/1f/main/classes.dex
+#Wed Oct 26 17:09:46 EDT 2016
+base.0=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_e53fcd5e75f4a17fc88f5de910de70836bf8666b
+renamed.1=classes.dex
+renamed.0=classes2.dex
+file.1=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_2d779bcbb1aec2c91ea81fc79601a19efdc5bd2a/classes.dex
+base.1=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_2d779bcbb1aec2c91ea81fc79601a19efdc5bd2a
+file.0=/home/jsemaan/StudioProjects/packetfence-android-agent/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run_e53fcd5e75f4a17fc88f5de910de70836bf8666b/classes.dex
