@@ -56,7 +56,7 @@ import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
 
-	public static String profileUrl = "http://172.20.20.63:8000/wireless-profile.mobileconfig";
+	public static String profileUrl = "https://www.packetfence.org/profile.xml";
 
 	public static int EAPTYPE_TLS = 13;
 	public static int EAPTYPE_LEAP = 17;
