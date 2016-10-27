@@ -305,20 +305,23 @@ public class MainActivity extends Activity {
 						//the rest of the flow is handled by callbacks after the activities
 						//looks like Android is a wanabe Javascript
 						// We do not see done_configuring here as the callback will do it for us
-						promptUserPassword();
+						promptCertPassword();
 
 					}
 					else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
 						System.out.println("Detected WPA EAP-PEAP configuration");
 						String username = (String) eapClientConfigurationHashMap
 								.get("UserName");
-						String password = (String) eapClientConfigurationHashMap
-								.get("UserPassword");
 
-						System.out.println("Configuring " + ssid + " with username " + username + " and password " + password);
+                        if(username != null || username.trim().length() > 0) {
+                            promptUsernamePasswordAndConfigurePEAP(ssid, username);
+                        }
+                        else {
+                            configureWirelessConnectionWPA2PEAP(ssid, username, "");
+                        }
 
-						configureWirelessConnectionWPA2PEAP(ssid, username, password);
-						done_configuring = true;
+
+
 					}
 
 
@@ -454,7 +457,27 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	public void promptUserPassword() {
+    public void promptUsernamePasswordAndConfigurePEAP(final String ssid, final String username) {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setTitle("Enter password for "+username);
+        //alert.setMessage("Enter password for : "+username);
+
+        // Set an EditText view to get user input
+        final EditText input = new EditText(this);
+        alert.setView(input);
+
+        alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String password = input.getText().toString();
+                configureWirelessConnectionWPA2PEAP(ssid, username, password);
+            }
+        });
+
+        alert.show();
+    }
+
+	public void promptCertPassword() {
 		AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
 		alert.setTitle("Certificate password");
@@ -614,6 +637,8 @@ public class MainActivity extends Activity {
 	}
 
     public void configureWirelessConnectionWPA2PEAP(String ssid, String username, String password){
+        System.out.println("Configuring " + ssid + " with username " + username + " and password " + password);
+
         WifiManager mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
 
         WifiConfiguration mWifiConfig = new WifiConfiguration();
@@ -648,7 +673,7 @@ public class MainActivity extends Activity {
 
         mEnterpriseConfig.setIdentity(username);
         mEnterpriseConfig.setAnonymousIdentity(username);
-        mEnterpriseConfig.setPassword(null);
+        mEnterpriseConfig.setPassword(password);
 
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
@@ -656,6 +681,8 @@ public class MainActivity extends Activity {
         System.out.println(mWifiConfig.toString());
 
         enableWifiConfiguration(mWifiConfig, true);
+
+        done_configuring = true;
     }
 
 	/*
