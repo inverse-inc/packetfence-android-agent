@@ -75,10 +75,10 @@ android {
         targetSdkVersion 19
 
         // Defines the version number of your app.
-        versionCode 1
+        versionCode 3
 
         // Defines a user-friendly version name for your app.
-        versionName "1.0"
+        versionName "2.1"
     }
 
     /**

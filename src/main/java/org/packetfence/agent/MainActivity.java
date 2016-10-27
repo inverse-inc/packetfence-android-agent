@@ -3,17 +3,11 @@ package org.packetfence.agent;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URLConnection;
 import java.security.KeyManagementException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,29 +22,11 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpVersion;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.scheme.SocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiEnterpriseConfig;
 import android.net.wifi.WifiManager;
@@ -58,13 +34,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.os.Environment;
 import android.os.Looper;
 import android.text.InputType;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -81,6 +55,8 @@ import com.android.volley.toolbox.Volley;
 import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
+
+	public static String profileUrl = "http://172.20.20.63:8000/wireless-profile.mobileconfig";
 
 	public static int EAPTYPE_TLS = 13;
 	public static int EAPTYPE_LEAP = 17;
@@ -158,7 +134,7 @@ public class MainActivity extends Activity {
 		String content;
 		NukeSSLCerts.nuke();
 		final Activity view = this;
-		StringRequest stringRequest = new StringRequest(Request.Method.GET, "http://172.20.20.63:8000/wireless-profile.mobileconfig",
+		StringRequest stringRequest = new StringRequest(Request.Method.GET, profileUrl,
 				new Response.Listener<String>() {
 					@Override
 					public void onResponse(String response) {
