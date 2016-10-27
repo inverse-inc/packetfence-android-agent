@@ -59,6 +59,8 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Environment;
+import android.os.Looper;
+import android.text.InputType;
 import android.util.Base64;
 import android.view.Menu;
 import android.view.View;
@@ -124,7 +126,7 @@ public class MainActivity extends Activity {
 	public void configure(View view) throws KeyManagementException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, IOException {
 		context = view.getContext();
 		ByteArrayOutputStream content;
-
+        final Activity activity = this;
 
 		final ProgressDialog myPd_ring = ProgressDialog.show(MainActivity.this,
 				"Please wait", "Configuring...", true);
@@ -135,7 +137,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				try {
+                Looper.prepare();
+                try {
 					int t = 0;
 					while (!done_configuring || t < 5000) {
 						Thread.sleep(100);
@@ -144,6 +147,7 @@ public class MainActivity extends Activity {
 				} catch (Exception e) {
 				}
 				myPd_ring.dismiss();
+
 			}
 		}).start();
 
@@ -191,9 +195,9 @@ public class MainActivity extends Activity {
 			b.setEnabled(false);
 		} else {
 			Toast.makeText(this, "Unable to fetch configuration profile.", Toast.LENGTH_LONG).show();
+            done_configuring = true;
 		}
 
-		done_configuring = true;
 	}
 
 	private void configureCertificates(){
@@ -465,6 +469,7 @@ public class MainActivity extends Activity {
 
         // Set an EditText view to get user input
         final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         alert.setView(input);
 
         alert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -888,7 +893,7 @@ public class MainActivity extends Activity {
 					.show();
 		} else {
 			System.out.println("Created network with ID of " + id);
-			Toast.makeText(this, "Success ! Created new network !", Toast.LENGTH_LONG)
+			Toast.makeText(this, "Success ! Created new network "+config.SSID+"!", Toast.LENGTH_LONG)
 					.show();
 		}
 
