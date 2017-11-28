@@ -19,7 +19,7 @@ buildscript {
      */
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:2.3.0'
     }
 }
 
@@ -75,7 +75,7 @@ android {
         targetSdkVersion 19
 
         // Defines the version number of your app.
-        versionCode 3
+        versionCode 5
 
         // Defines a user-friendly version name for your app.
         versionName "2.1"

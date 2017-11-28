@@ -56,7 +56,7 @@ import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
 
-	public static String profileUrl = "https://www.packetfence.org/profile.xml";
+	public static String profileUrl = "https://wireless-profiles.packetfence.org/profile.xml";
 
 	public static int EAPTYPE_TLS = 13;
 	public static int EAPTYPE_LEAP = 17;
@@ -358,7 +358,7 @@ public class MainActivity extends Activity {
 		List<WifiConfiguration> currentConfigurations;
 		WifiManager manager;
 
-		manager = (WifiManager) getSystemService(WIFI_SERVICE);
+		manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 		currentConfigurations = manager.getConfiguredNetworks();
 
 		for (WifiConfiguration currentConfiguration : currentConfigurations) {
@@ -568,7 +568,7 @@ public class MainActivity extends Activity {
 
 
 	public void configureWirelessConnectionWPA2TLS(String ssid, String username){
-		WifiManager mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		WifiManager mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
 		WifiConfiguration mWifiConfig = new WifiConfiguration();
 		WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
@@ -620,7 +620,7 @@ public class MainActivity extends Activity {
     public void configureWirelessConnectionWPA2PEAP(String ssid, String username, String password){
         System.out.println("Configuring " + ssid + " with username " + username + " and password " + password);
 
-        WifiManager mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiManager mWifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
 
         WifiConfiguration mWifiConfig = new WifiConfiguration();
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
@@ -860,7 +860,7 @@ public class MainActivity extends Activity {
 	 * 
 	 */
 	public void enableWifiConfiguration(WifiConfiguration config, boolean connect) {
-		WifiManager wifi = (WifiManager) getSystemService(WIFI_SERVICE);
+		WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
 
 		int id = wifi.addNetwork(config);
 		if (id < 0) {
