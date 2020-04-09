@@ -56,7 +56,7 @@ import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
 
-	public static String profileUrl = "https://wireless-profiles.packetfence.org/profile.xml";
+	public static String profileUrl = "https://support.inverse.ca/~jsemaan/profile.xml";
 
 	public static int EAPTYPE_TLS = 13;
 	public static int EAPTYPE_LEAP = 17;
@@ -507,9 +507,11 @@ public class MainActivity extends Activity {
 				String subjectArray[] = subject.toString().split(",");
 				for (String s : subjectArray) {
 					String[] str = s.trim().split("=");
-					String key = str[0];
-					String value = str[1];
-					System.out.println(key + " - " + value);
+					if(str.length >= 2) {
+						String key = str[0];
+						String value = str[1];
+						System.out.println(key + " - " + value);
+					}
 				}
 			}
 		} catch (KeyStoreException e) {
