@@ -56,7 +56,7 @@ import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
 
-	public static String profileUrl = "https://support.inverse.ca/~jsemaan/profile.xml";
+	public static String profileUrl = "https://wireless-profiles.packetfence.org/profile.xml";
 
 	public static int EAPTYPE_TLS = 13;
 	public static int EAPTYPE_LEAP = 17;
