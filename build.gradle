@@ -10,6 +10,11 @@ buildscript {
 
     repositories {
         jcenter()
+        mavenCentral()
+        maven {
+            url 'https://maven.google.com/'
+            name 'Google'
+        }
     }
 
     /**
@@ -19,7 +24,7 @@ buildscript {
      */
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:4.0.1'
     }
 }
 
@@ -29,7 +34,7 @@ buildscript {
  * Android-specific build options.
  */
 
-apply plugin: 'com.android.application'
+ apply plugin: 'com.android.application'
 
 /**
  * The android {} block is where you configure all your Android-specific
@@ -48,8 +53,8 @@ android {
      * download the build tools using the SDK Manager.
      */
 
-    compileSdkVersion 19
-    buildToolsVersion '25'
+    compileSdkVersion 29
+    buildToolsVersion '29.0.2'
 
     /**
      * The defaultConfig {} block encapsulates default settings and entries for all
@@ -72,13 +77,13 @@ android {
         minSdkVersion 14
 
         // Specifies the API level used to test the app.
-        targetSdkVersion 28
+        targetSdkVersion 29
 
         // Defines the version number of your app.
-        versionCode 7
+        versionCode 2
 
         // Defines a user-friendly version name for your app.
-        versionName "2.2"
+        versionName "2.2.29"
     }
 
     /**
@@ -139,9 +144,15 @@ android {
 
 dependencies {
     //compile project(":libs")
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:19.1.0'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+repositories {
+    maven {
+        url 'https://maven.google.com/'
+        name 'Google'
+    }
 }
 
 sourceSets {
