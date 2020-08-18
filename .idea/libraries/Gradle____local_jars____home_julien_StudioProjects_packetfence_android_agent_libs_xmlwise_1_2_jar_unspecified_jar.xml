@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: __local_jars__:/home/jsemaan/StudioProjects/packetfence-android-agent/libs/xmlwise-1_2.jar:unspecified@jar">
+  <library name="Gradle: __local_jars__:/home/julien/StudioProjects/packetfence-android-agent/libs/xmlwise-1_2.jar:unspecified@jar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/libs/xmlwise-1_2.jar!/" />
     </CLASSES>
