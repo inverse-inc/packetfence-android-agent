@@ -1,11 +1,13 @@
 package org.packetfence.agent;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.toolbox.HttpHeaderParser;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Map;
 
 public class DiscoveryStringRequest extends Request<DiscoveryStringRequest.ResponseM> {
@@ -38,6 +40,15 @@ public class DiscoveryStringRequest extends Request<DiscoveryStringRequest.Respo
         responseM.response = parsed;
 
         return Response.success(responseM, HttpHeaderParser.parseCacheHeaders(response));
+    }
+
+    @Override
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        Map<String, String>  params = new HashMap<String, String>();
+        params.put("User-Agent", "PacketFence Android Agent");
+        params.put("Host", "wireless-profiles.packetfence.org");
+
+        return params;
     }
 
 

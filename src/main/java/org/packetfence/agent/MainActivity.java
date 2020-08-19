@@ -58,9 +58,14 @@ import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
 
-	public static String discoveryUrl = "http://vpn.inverse.ca/packetfence-android-agent-test";
+	public static String discoveryUrl = "http://wireless-profiles.packetfence.org/packetfence-android-agent-test";
 	public String profileDomainName = null;
-	public static String profileUrl = "https://support.inverse.ca/~jsemaan/profile.xml";
+	public String profileProto = "https";
+	public String profilePath = "/profile.xml";
+
+	// Just used for testing purposes when you want to force a URL to be used
+	// A production build should always have this value set to null
+	public static String overrideProfileUrl = null;
 
 	public static int EAPTYPE_TLS = 13;
 	public static int EAPTYPE_LEAP = 17;
@@ -135,17 +140,24 @@ public class MainActivity extends Activity {
 	}
 
 	public void fetchPortalDomainName() {
+		if(overrideProfileUrl != null){
+			fetchXML();
+			return;
+		}
+
 		final MainActivity view = this;
 		DiscoveryStringRequest stringRequest = new DiscoveryStringRequest(Request.Method.GET, discoveryUrl,
 				new Response.Listener<DiscoveryStringRequest.ResponseM>() {
 
 					@Override
 					public void onResponse(DiscoveryStringRequest.ResponseM response) {
-						Toast.makeText(view, "Downloaded profile successfully", Toast.LENGTH_LONG)
+						Toast.makeText(view, "Profile domain name probe was successful", Toast.LENGTH_LONG)
 								.show();
 						try {
 							URL url = new URL(response.headers.get("Location"));
 							view.profileDomainName = url.getHost();
+							System.out.println("Found profile domain name: "+view.profileDomainName);
+							fetchXML();
 						}
 						catch (MalformedURLException e) {
 							Toast.makeText(view, "Unable to detect profile domain name", Toast.LENGTH_LONG).show();
@@ -171,6 +183,15 @@ public class MainActivity extends Activity {
 	public void fetchXML() {
 		String content;
 		final Activity view = this;
+
+		String profileUrl;
+		if(overrideProfileUrl != null){
+			profileUrl = overrideProfileUrl;
+		}
+		else {
+			profileUrl = profileProto + "://" + profileDomainName + profilePath;
+		}
+
 		StringRequest stringRequest = new StringRequest(Request.Method.GET, profileUrl,
 				new Response.Listener<String>() {
 					@Override
