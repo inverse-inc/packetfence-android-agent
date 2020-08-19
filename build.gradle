@@ -10,6 +10,7 @@ buildscript {
 
     repositories {
         jcenter()
+        google()
     }
 
     /**
@@ -19,7 +20,7 @@ buildscript {
      */
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:4.0.1'
     }
 }
 
@@ -49,7 +50,7 @@ android {
      */
 
     compileSdkVersion 19
-    buildToolsVersion '25'
+    buildToolsVersion '28.0.3'
 
     /**
      * The defaultConfig {} block encapsulates default settings and entries for all
@@ -151,3 +152,9 @@ sourceSets {
     }
 }
 
+allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
