@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: __local_jars__:/home/julien/StudioProjects/packetfence-android-agent/libs/volley.jar:unspecified@jar">
+  <library name="Gradle: ./libs/volley.jar">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/libs/volley.jar!/" />
     </CLASSES>

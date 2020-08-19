@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -56,7 +58,14 @@ import javax.security.cert.X509Certificate;
 
 public class MainActivity extends Activity {
 
-	public static String profileUrl = "https://support.inverse.ca/~jsemaan/profile.xml";
+	public static String discoveryUrl = "http://wireless-profiles.packetfence.org/packetfence-android-agent-test";
+	public String profileDomainName = null;
+	public String profileProto = "https";
+	public String profilePath = "/profile.xml";
+
+	// Just used for testing purposes when you want to force a URL to be used
+	// A production build should always have this value set to null
+	public static String overrideProfileUrl = null;
 
 	public static int EAPTYPE_TLS = 13;
 	public static int EAPTYPE_LEAP = 17;
@@ -127,13 +136,62 @@ public class MainActivity extends Activity {
 			}
 		}).start();
 
-		fetchXML();
+		fetchPortalDomainName();
+	}
+
+	public void fetchPortalDomainName() {
+		if(overrideProfileUrl != null){
+			fetchXML();
+			return;
+		}
+
+		final MainActivity view = this;
+		DiscoveryStringRequest stringRequest = new DiscoveryStringRequest(Request.Method.GET, discoveryUrl,
+				new Response.Listener<DiscoveryStringRequest.ResponseM>() {
+
+					@Override
+					public void onResponse(DiscoveryStringRequest.ResponseM response) {
+						Toast.makeText(view, "Profile domain name probe was successful", Toast.LENGTH_LONG)
+								.show();
+						try {
+							URL url = new URL(response.headers.get("Location"));
+							view.profileDomainName = url.getHost();
+							System.out.println("Found profile domain name: "+view.profileDomainName);
+							fetchXML();
+						}
+						catch (MalformedURLException e) {
+							Toast.makeText(view, "Unable to detect profile domain name", Toast.LENGTH_LONG).show();
+						}
+					}
+				}, new Response.ErrorListener() {
+			@Override
+			public void onErrorResponse(VolleyError error) {
+				if(error.networkResponse == null) {
+					Toast.makeText(view, "Network error while finding profile domain name: " + error.getLocalizedMessage(), Toast.LENGTH_LONG)
+							.show();
+				}
+				else {
+					Toast.makeText(view, "Error fetching profile ", Toast.LENGTH_LONG)
+							.show();
+				}
+			}
+		});
+		RequestQueue queue = Volley.newRequestQueue(this);
+		queue.add(stringRequest);
 	}
 
 	public void fetchXML() {
 		String content;
-		NukeSSLCerts.nuke();
 		final Activity view = this;
+
+		String profileUrl;
+		if(overrideProfileUrl != null){
+			profileUrl = overrideProfileUrl;
+		}
+		else {
+			profileUrl = profileProto + "://" + profileDomainName + profilePath;
+		}
+
 		StringRequest stringRequest = new StringRequest(Request.Method.GET, profileUrl,
 				new Response.Listener<String>() {
 					@Override
