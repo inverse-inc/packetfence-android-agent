@@ -15,25 +15,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="989caea0-4dd5-41d8-885f-32d7851267d8" name="Default" comment="update app">
-      <change beforePath="$PROJECT_DIR$/.gradle/4.2/fileChanges/last-build.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.2/fileHashes/fileHashes.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/4.2/fileHashes/fileHashes.lock" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/built.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_jars____home_julien_StudioProjects_packetfence_android_agent_libs_volley_jar_unspecified_jar.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle____local_jars____home_julien_StudioProjects_packetfence_android_agent_libs_xmlwise_1_2_jar_unspecified_jar.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packetfence-android-agent.iml" beforeDir="false" afterPath="$PROJECT_DIR$/packetfence-android-agent.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/DiscoveryStringRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/DiscoveryStringRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,8 +73,10 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ApkExportedModule" value="packetfence-android-agent" />
     <property name="ExportApk.ApkPath" value="$PROJECT_DIR$" />
     <property name="ExportApk.BuildType" value="release" />
+    <property name="ExportApk.BuildVariants" value="release" />
     <property name="ExportApk.Flavors" value="" />
     <property name="ExportApk.SignV1" value="true" />
     <property name="ExportApk.SignV2" value="true" />
@@ -86,7 +84,7 @@
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
     <property name="device.picker.selection" value="00c6410d3748caf8" />
     <property name="last_opened_file_path" value="$USER_HOME$/Downloads/Inverse.keystore" />
-    <property name="memory.settings.postsync.last.time.stamp" value="1597845573702" />
+    <property name="memory.settings.postsync.last.time.stamp" value="1598356199872" />
     <property name="sync.plugin.last.upgrade.timestamp" value="1586780879512" />
   </component>
   <component name="RunManager">
@@ -187,33 +185,33 @@
     <option name="LAST_COMMIT_MESSAGE" value="update app" />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1807" height="278" key="GridCell.Tab.0.bottom" timestamp="1597847448223">
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom" timestamp="1598356246948">
       <screen x="264" y="1440" width="1920" height="1080" />
     </state>
-    <state width="1807" height="278" key="GridCell.Tab.0.bottom/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1597847448223" />
+    <state width="1807" height="278" key="GridCell.Tab.0.bottom/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
     <state width="1802" height="284" key="GridCell.Tab.0.bottom/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197911" />
-    <state width="1807" height="278" key="GridCell.Tab.0.center" timestamp="1597847448223">
+    <state width="1807" height="278" key="GridCell.Tab.0.center" timestamp="1598356246948">
       <screen x="264" y="1440" width="1920" height="1080" />
     </state>
-    <state width="1807" height="278" key="GridCell.Tab.0.center/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1597847448223" />
+    <state width="1807" height="278" key="GridCell.Tab.0.center/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
     <state width="1802" height="284" key="GridCell.Tab.0.center/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197910" />
-    <state width="1807" height="278" key="GridCell.Tab.0.left" timestamp="1597847448223">
+    <state width="1807" height="278" key="GridCell.Tab.0.left" timestamp="1598356246948">
       <screen x="264" y="1440" width="1920" height="1080" />
     </state>
-    <state width="1807" height="278" key="GridCell.Tab.0.left/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1597847448223" />
+    <state width="1807" height="278" key="GridCell.Tab.0.left/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
     <state width="1802" height="284" key="GridCell.Tab.0.left/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197910" />
-    <state width="1807" height="278" key="GridCell.Tab.0.right" timestamp="1597847448223">
+    <state width="1807" height="278" key="GridCell.Tab.0.right" timestamp="1598356246948">
       <screen x="264" y="1440" width="1920" height="1080" />
     </state>
-    <state width="1807" height="278" key="GridCell.Tab.0.right/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1597847448223" />
+    <state width="1807" height="278" key="GridCell.Tab.0.right/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
     <state width="1802" height="284" key="GridCell.Tab.0.right/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197911" />
     <state x="746" y="1628" key="SettingsEditor" timestamp="1597845705428">
       <screen x="264" y="1440" width="1920" height="1080" />
     </state>
     <state x="746" y="1628" key="SettingsEditor/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1597845705428" />
-    <state x="913" y="1821" key="com.intellij.ide.util.TipDialog" timestamp="1597845723483">
+    <state x="913" y="1821" key="com.intellij.ide.util.TipDialog" timestamp="1598356198441">
       <screen x="264" y="1440" width="1920" height="1080" />
     </state>
-    <state x="913" y="1821" key="com.intellij.ide.util.TipDialog/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1597845723483" />
+    <state x="913" y="1821" key="com.intellij.ide.util.TipDialog/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356198441" />
   </component>
 </project>

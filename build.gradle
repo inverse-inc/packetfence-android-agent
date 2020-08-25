@@ -49,8 +49,7 @@ android {
      * download the build tools using the SDK Manager.
      */
 
-    compileSdkVersion 19
-    buildToolsVersion '28.0.3'
+    compileSdkVersion 24
 
     /**
      * The defaultConfig {} block encapsulates default settings and entries for all
@@ -76,10 +75,10 @@ android {
         targetSdkVersion 29
 
         // Defines the version number of your app.
-        versionCode 9
+        versionCode 10
 
         // Defines a user-friendly version name for your app.
-        versionName "2.2"
+        versionName "2.3.1"
     }
 
     /**
