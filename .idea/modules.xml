@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/packetfence-android-agent.iml" filepath="$PROJECT_DIR$/packetfence-android-agent.iml" group="packetfence-android-agent" />
+      <module fileurl="file://$PROJECT_DIR$/packetfence-android-agent.iml" filepath="$PROJECT_DIR$/packetfence-android-agent.iml" />
     </modules>
   </component>
 </project>
