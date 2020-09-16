@@ -21,21 +21,21 @@
     <Button
             android:id="@+id/button1"
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
             android:onClick="configure"
             android:text="Configure"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            android:layout_centerInParent="true" android:textSize="18sp"/>
     <Button
             android:id="@+id/button2"
             style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
             android:onClick="quit"
             android:text="Exit"
             android:visibility="visible" android:layout_centerHorizontal="true"
-            android:layout_alignBottom="@id/imageView1" android:layout_alignParentRight="true"/>
+            android:layout_alignBottom="@id/imageView1" android:layout_alignParentRight="true"
+            android:textSize="14sp"/>
 
 </RelativeLayout>
