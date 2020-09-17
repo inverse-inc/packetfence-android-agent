@@ -110,7 +110,7 @@ public class MainActivity extends Activity {
             }
         }, lnum);
         MainActivity.this.finish();
-        System.exit(0);
+        MainActivity.this.moveTaskToBack(true);
     }
 
     /*
