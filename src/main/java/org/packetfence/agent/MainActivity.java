@@ -678,7 +678,7 @@ public class MainActivity extends Activity {
         sb.append("STEP 4:\n" +
                 "WAIT until the new ssid (" + MainActivity.this.ssid + ") is used with the comment 'Connected via PaketFence Agent'\n");
         alertDialog2.setMessage(sb);
-        final String  mess = "Remove the connection?";
+        final String mess = "Remove the connection?";
         alertDialog2.setPositiveButton(mess,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -942,7 +942,7 @@ public class MainActivity extends Activity {
         final WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final int status = wifiManager.removeNetworkSuggestions(suggestionsList);
         if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
-            showNetworkError(status);
+            if (MainActivity.this.isDebugMode) showNetworkError(status);
         }
     }
 
