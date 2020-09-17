@@ -5,11 +5,10 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.*;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
-import android.net.wifi.*;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiEnterpriseConfig;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiNetworkSuggestion;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,7 +19,6 @@ import android.text.InputType;
 import android.util.Base64;
 import android.view.*;
 import android.widget.*;
-import androidx.annotation.NonNull;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -49,7 +47,7 @@ public class MainActivity extends Activity {
 
     private static final boolean isDebugMode = false;
     private static final int FLOW_CA = 20;
-    private static final int FLOW_BIB = 20;
+    private static final int FLOW_BIB = 25;
     private static final int api_version = Build.VERSION.SDK_INT;
     public static String discoveryUrl = "http://wireless-profiles.packetfence.org/packetfence-android-agent-test";
     // Just used for testing purposes when you want to force a URL to be used
@@ -77,6 +75,7 @@ public class MainActivity extends Activity {
     private PrivateKey userPrivateKey;
     private java.security.cert.X509Certificate userCertificate;
     private java.security.cert.X509Certificate caCertificate;
+    private BroadcastReceiver broadcastReceiver;
 
     /*
      * OVERRIDES
@@ -110,7 +109,8 @@ public class MainActivity extends Activity {
             public void run() {
             }
         }, lnum);
-        finishAndRemoveTask();
+        MainActivity.this.finishAndRemoveTask();
+        System.exit(0);
     }
 
     /*
@@ -622,7 +622,7 @@ public class MainActivity extends Activity {
         if (certIsGood) {
             if (MainActivity.this.api_version >= 29) {
                 configureWPA2TLSAfterAPI29();
-            } else if (MainActivity.this.api_version > 19 && MainActivity.this.api_version < 25) {
+            } else if (MainActivity.this.api_version > 19 && MainActivity.this.api_version < 29) {
                 configureWPA2TLSAPI20();
             } else {
                 configureWPA2TLSBeforeAPI29();
@@ -653,9 +653,72 @@ public class MainActivity extends Activity {
 
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
-
-        enableWifiConfiguration(suggestionsList);
+        alertDialogAfterAPI29(suggestionsList);
     }
+
+    // Alert Dialog for API 29
+    public void alertDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
+        AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(
+                MainActivity.this);
+        alertDialog2.setTitle("How it will work:");
+        StringBuilder sb = new StringBuilder();
+        sb.append("STEP 1: The wifi setting will open\n");
+        sb.append("\n");
+        sb.append("STEP 2: \n" +
+                "- You have to forget the current open network\n");
+        sb.append("\n");
+        sb.append("STEP 2:\n" +
+                "- Check that your device is not connected to any SSID.\n");
+        sb.append("\n");
+        sb.append("STEP 3:\n" +
+                "- You have to allow the application to modify the wifi-configuration for the PacketFence Agent.\n" +
+                "NOTE: " +
+                "On Android 10, the request is silent.\n");
+        sb.append("\n");
+        sb.append("STEP 4:\n" +
+                "WAIT until the new ssid (" + MainActivity.this.ssid + ") is used with the comment 'Connected via PaketFence Agent'\n");
+        alertDialog2.setMessage(sb);
+        final String  mess = "Remove the connection?";
+        alertDialog2.setPositiveButton(mess,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        howToDialogAfterAPI29(suggestionsList);
+                    }
+                });
+        alertDialog2.show();
+    }
+
+    public void howToDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
+        AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(
+                MainActivity.this);
+        alertDialog2.setTitle("How to: ");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Disconnect ?\n" +
+                "- If you want to leave that " + MainActivity.this.ssid + ", REMOVE the APPLICATION \"PacketFence Agent\".\n");
+        sb.append("\n");
+        sb.append("- NEVER EVER use the 'Forget' or 'Disconnect' button on the \"" + MainActivity.this.ssid + "\" SSID\n" +
+                "=> If you do, you will not be able to use it for the next 24 hours.\n");
+        sb.append("\n");
+        sb.append("Change the " + MainActivity.this.ssid + " settings?\n" +
+                "- It is not possible. It is managed by the application PacketFence Agent.\n" +
+                "- It is the new android way to set WIFI access. It prevent application to do what ever it want's without your consent.\n");
+        alertDialog2.setMessage(sb);
+        alertDialog2.setPositiveButton("OK, I've got it. Let's GO!",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        showInBox("You will be redirected to the wifi configuration");
+                        enableWifiConfiguration(suggestionsList);
+                    }
+                });
+        alertDialog2.setNegativeButton("What are the Steps?",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        alertDialogAfterAPI29(suggestionsList);
+                    }
+                });
+        alertDialog2.show();
+    }
+
 
     public void configureWPA2TLSBeforeAPI29() {
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
@@ -814,8 +877,8 @@ public class MainActivity extends Activity {
 
     public void configureWPA2PEAPBeforeAPI29() {
         showInDebug("Configuring " + MainActivity.this.ssid +
-                    " with username " + MainActivity.this.tlsUsername +
-                    " and password " + MainActivity.this.password);
+                " with username " + MainActivity.this.tlsUsername +
+                " and password " + MainActivity.this.password);
 
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
@@ -937,7 +1000,7 @@ public class MainActivity extends Activity {
     }
 
     /* ENABLE CONFIGURATION */
-    public void preparePostSuggestion(){
+    public void preparePostSuggestion() {
         IntentFilter intentFilter = new IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -952,6 +1015,7 @@ public class MainActivity extends Activity {
                 showInDebug("Connection Suggestion Succeeded");
             }
         };
+        MainActivity.this.broadcastReceiver = broadcastReceiver;
         MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
     }
 
@@ -974,6 +1038,7 @@ public class MainActivity extends Activity {
             showInDebug("Status " + status);
             showNetworkError(status);
         }
+        MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
         MainActivity.this.done_configuring = true;
     }
 
@@ -992,7 +1057,7 @@ public class MainActivity extends Activity {
                 wifi.saveConfiguration();
                 wifi.enableNetwork(id, true);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         MainActivity.this.done_configuring = true;
