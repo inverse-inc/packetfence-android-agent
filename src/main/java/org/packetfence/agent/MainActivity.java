@@ -901,7 +901,7 @@ public class MainActivity extends Activity {
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
 
-        enableWifiConfiguration(suggestionsList);
+        alertDialogAfterAPI29(suggestionsList);
     }
 
     public void configureWPAPSKBeforeAPI29() {
