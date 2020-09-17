@@ -838,43 +838,6 @@ public class MainActivity extends Activity {
         enableWifiConfiguration(suggestionsList);
     }
 
-    /*
-    // ONLY for stuff inside application
-    // TODO: to be removed
-    public void configureWPA2PEAPAfterAPI29_NR() {
-        WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
-        mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
-        mEnterpriseConfig.setAnonymousIdentity(MainActivity.this.tlsUsername);
-        mEnterpriseConfig.setPassword(MainActivity.this.password);
-        mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
-        mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
-
-        WifiNetworkSpecifier wifiNetworkSpecifier = new WifiNetworkSpecifier.Builder()
-                .setSsid(ssid)
-                .setWpa2EnterpriseConfig(mEnterpriseConfig)
-                .build();
-
-        NetworkRequest networkRequest = new NetworkRequest.Builder()
-                .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
-                .removeCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                .setNetworkSpecifier(wifiNetworkSpecifier)
-                .build();
-
-        //ConnectivityManager connectivityManager = (ConnectivityManager) MainActivity.this.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        //connectivityManager.requestNetwork(networkRequest, new ConnectivityManager.NetworkCallback());
-
-        final ConnectivityManager cm = (ConnectivityManager) MainActivity.this.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
-            @Override
-            public void onAvailable(@NonNull Network network) {
-                super.onAvailable(network);
-                cm.bindProcessToNetwork(network);
-            }
-        };
-        cm.requestNetwork(networkRequest, networkCallback);
-    }
-     */
-
     public void configureWPA2PEAPBeforeAPI29() {
         showInDebug("Configuring " + MainActivity.this.ssid +
                 " with username " + MainActivity.this.tlsUsername +
