@@ -656,7 +656,7 @@ public class MainActivity extends Activity {
         alertDialogAfterAPI29(suggestionsList);
     }
 
-    // Alert Dialog for API 29
+    // Alert Dialog for API 29 Part 1
     public void alertDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(
                 MainActivity.this);
@@ -666,14 +666,14 @@ public class MainActivity extends Activity {
         sb.append("\n");
         sb.append("Step 2: \n" +
                 "You will have to forget the current WiFi network you're connected on\n");
-         sb.append("\n");
+        sb.append("\n");
         sb.append("Step 3:\n" +
                 "Ensure that your device is not connected to any WiFi network.\n");
-         sb.append("\n");
+        sb.append("\n");
         sb.append("Step 4:\n" +
                 "You have to allow the application to modify the WiFi configuration for the PacketFence Agent.\n" +
-                 "NOTE: On Android 10, the request is silent and will be in your notifications.\n");
-         sb.append("\n");
+                "NOTE: On Android 10, the request is silent and will be in your notifications.\n");
+        sb.append("\n");
         sb.append("Step 5:\n" +
                 "Wait until the new ssid (" + MainActivity.this.ssid + ") is connected with the comment 'Connected via PacketFence Agent'\n");
         alertDialog2.setMessage(sb);
@@ -687,6 +687,7 @@ public class MainActivity extends Activity {
         alertDialog2.show();
     }
 
+    // Alert Dialog for API 29 Part 2
     public void howToDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(
                 MainActivity.this);
@@ -697,7 +698,7 @@ public class MainActivity extends Activity {
         sb.append("\n");
         sb.append("NEVER use the 'Forget' or 'Disconnect' button on the \"" + MainActivity.this.ssid + "\" SSID.\n" +
                 "If you do, you will not be able to use it for the next 24 hours.\n");
-         sb.append("\n");
+        sb.append("\n");
         sb.append("Changing " + MainActivity.this.ssid + " settings:\n" +
                 "Unfortunately, this will not be possible. It is managed by the application PacketFence Agent.\n" +
                 "This is the new android way to set WiFi access. It prevents applications to change your network settings without your consent.\n");
@@ -718,7 +719,7 @@ public class MainActivity extends Activity {
         alertDialog2.show();
     }
 
-
+    // Configure WPA2TLS Before API 29
     public void configureWPA2TLSBeforeAPI29() {
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
 
