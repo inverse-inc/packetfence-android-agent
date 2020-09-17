@@ -109,7 +109,7 @@ public class MainActivity extends Activity {
             public void run() {
             }
         }, lnum);
-        MainActivity.this.finishAndRemoveTask();
+        MainActivity.this.finish();
         System.exit(0);
     }
 
