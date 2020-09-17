@@ -662,23 +662,23 @@ public class MainActivity extends Activity {
                 MainActivity.this);
         alertDialog2.setTitle("How it will work:");
         StringBuilder sb = new StringBuilder();
-        sb.append("STEP 1: The wifi setting will open\n");
+        sb.append("STEP 1: The WIFI setting will open\n");
         sb.append("\n");
         sb.append("STEP 2: \n" +
                 "- You have to forget the current open network\n");
         sb.append("\n");
         sb.append("STEP 2:\n" +
-                "- Check that your device is not connected to any SSID.\n");
+                "- Check if your device is not connected to any SSID.\n");
         sb.append("\n");
         sb.append("STEP 3:\n" +
-                "- You have to allow the application to modify the wifi-configuration for the PacketFence Agent.\n" +
+                "- Allow \"PacketFence Agent\" to modify your WIFI-Configuration.\n" +
                 "NOTE: " +
                 "On Android 10, the request is silent.\n");
         sb.append("\n");
         sb.append("STEP 4:\n" +
-                "WAIT until the new ssid (" + MainActivity.this.ssid + ") is used with the comment 'Connected via PaketFence Agent'\n");
+                "WAIT until the new ssid (" + MainActivity.this.ssid + ") is used with the comment \"Connected via PaketFence Agent\"\n");
         alertDialog2.setMessage(sb);
-        final String mess = "Remove the connection?";
+        final String mess = "Next";
         alertDialog2.setPositiveButton(mess,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -691,26 +691,27 @@ public class MainActivity extends Activity {
     public void howToDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(
                 MainActivity.this);
-        alertDialog2.setTitle("How to: ");
+        alertDialog2.setTitle("How to:");
         StringBuilder sb = new StringBuilder();
         sb.append("Disconnect ?\n" +
-                "- If you want to leave that " + MainActivity.this.ssid + ", REMOVE the APPLICATION \"PacketFence Agent\".\n");
+                "- If you want to leave that " + MainActivity.this.ssid + ".\n"+
+                "  => REMOVE the APPLICATION \"PacketFence Agent\".\n");
         sb.append("\n");
         sb.append("- NEVER EVER use the 'Forget' or 'Disconnect' button on the \"" + MainActivity.this.ssid + "\" SSID\n" +
-                "=> If you do, you will not be able to use it for the next 24 hours.\n");
+                "  => If you do, you will not be able to use it for the next 24 hours.\n");
         sb.append("\n");
-        sb.append("Change the " + MainActivity.this.ssid + " settings?\n" +
-                "- It is not possible. It is managed by the application PacketFence Agent.\n" +
+        sb.append("Change " + MainActivity.this.ssid + " settings?\n" +
+                "- It is not possible anymore. It is managed by the application PacketFence Agent.\n" +
                 "- It is the new android way to set WIFI access. It prevent application to do what ever it want's without your consent.\n");
         alertDialog2.setMessage(sb);
-        alertDialog2.setPositiveButton("OK, I've got it. Let's GO!",
+        alertDialog2.setNegativeButton("OK, I've got it. Let's GO!",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         showInBox("You will be redirected to the wifi configuration");
                         enableWifiConfiguration(suggestionsList);
                     }
                 });
-        alertDialog2.setNegativeButton("What are the Steps?",
+        alertDialog2.setPositiveButton("Previous",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         alertDialogAfterAPI29(suggestionsList);
