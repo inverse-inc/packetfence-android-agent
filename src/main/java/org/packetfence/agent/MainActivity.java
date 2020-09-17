@@ -939,7 +939,7 @@ public class MainActivity extends Activity {
 
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
-        final WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        final WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final int status = wifiManager.removeNetworkSuggestions(suggestionsList);
         if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
             if (MainActivity.this.isDebugMode) showNetworkError(status);
@@ -950,7 +950,7 @@ public class MainActivity extends Activity {
         List<WifiConfiguration> currentConfigurations;
         WifiManager manager;
 
-        manager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        manager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
         currentConfigurations = manager.getConfiguredNetworks();
 
         for (WifiConfiguration currentConfiguration : currentConfigurations) {
@@ -1006,7 +1006,7 @@ public class MainActivity extends Activity {
     }
 
     public void enableWifiConfiguration(WifiConfiguration config) {
-        WifiManager wifi = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiManager wifi = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
 
         showInDebug(config.toString());
         try {
