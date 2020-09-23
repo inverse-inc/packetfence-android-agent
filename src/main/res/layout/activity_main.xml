@@ -1,32 +1,41 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="0dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="0dp"
-    tools:context=".MainActivity" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="0dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="0dp"
+                android:paddingTop="0dp"
+                tools:context=".MainActivity">
 
     <ImageView
-        android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:cropToPadding="false"
-        android:scaleType="centerCrop"
-        android:src="@drawable/pf_bg" />
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:cropToPadding="false"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pf_bg"/>
 
     <Button
-        android:id="@+id/button1"
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:onClick="configure"
-        android:text="Configure"
-        android:visibility="visible" />
+            android:id="@+id/button1"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="100dp"
+            android:layout_height="50dp"
+            android:onClick="configure"
+            android:text="Configure"
+            android:visibility="visible"
+            android:layout_centerInParent="true" android:textSize="18sp"/>
+    <Button
+            android:id="@+id/button2"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:onClick="quit"
+            android:text="Exit"
+            android:visibility="visible" android:layout_centerHorizontal="true"
+            android:layout_alignBottom="@id/imageView1" android:layout_alignParentRight="true"
+            android:textSize="14sp"/>
 
 </RelativeLayout>

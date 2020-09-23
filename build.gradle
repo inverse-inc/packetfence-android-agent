@@ -49,7 +49,7 @@ android {
      * download the build tools using the SDK Manager.
      */
 
-    compileSdkVersion 24
+    compileSdkVersion 29
 
     /**
      * The defaultConfig {} block encapsulates default settings and entries for all
@@ -138,9 +138,10 @@ android {
  */
 
 dependencies {
-    //compile project(":libs")
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation project(":libs")
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.annotation:annotation:1.1.0'
 }
 
 sourceSets {
