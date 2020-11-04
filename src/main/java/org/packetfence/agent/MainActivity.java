@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
     private String password = "";
     private String caIssuer;
     private String caCrtName;
+    private String serverCN;
     private byte[] caCrt;
     private String ssid;
     private String tlsUsername;
@@ -494,6 +495,14 @@ public class MainActivity extends Activity {
                         MainActivity.this.userP12Name = (String) config.get("PayloadDisplayName");
                         MainActivity.this.tlsUsername = (String) config.get("PayloadCertificateFileName");
                     }
+                    if (payloadType.equals("com.apple.security.pkcs1")) {
+                        showInDebug("Found the EAP-TLS root certificate");
+                        MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
+                    } else {
+                        if (MainActivity.this.api_version >= 29) {
+                            showInBox("Your PacketFence server needs a patch or change manually the html/captive-portal/templates/wireless-profile-tls.xml and allow access to 'com.apple.security.pkcs1'");
+                        }
+                    }
                 }
                 configureWirelessConnectionWPA2TLS();
 
@@ -644,6 +653,8 @@ public class MainActivity extends Activity {
 
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.NONE);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TLS);
+        mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
+
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
                 .setWpa2EnterpriseConfig(mEnterpriseConfig)
@@ -824,6 +835,7 @@ public class MainActivity extends Activity {
         mEnterpriseConfig.setPassword(MainActivity.this.password);
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
+        mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
 
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
