@@ -509,6 +509,30 @@ public class MainActivity extends Activity {
                 showInDebug("Detected WPA EAP-PEAP configuration");
                 MainActivity.this.tlsUsername = (String) eapClientConfigurationHashMap
                         .get("UserName");
+
+                for (int i = 1; i < categoryObj.length; i++) {
+                    HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
+                    String payloadType = (String) (config.get("PayloadType"));
+                    if (payloadType.equals("com.apple.security.ca")) {
+                        showInDebug("Found root certificate");
+                        String caBytes = (String) config.get("PayloadContent");
+
+                        String caCrtNoHead = new String(caBytes);
+                        String caCrtStr = "";
+                        caCrtStr += "-----BEGIN CERTIFICATE-----\n";
+                        caCrtStr += caCrtNoHead;
+                        caCrtStr += "\n" +
+                                "-----END CERTIFICATE-----";
+
+                        MainActivity.this.caCrt = caCrtStr.getBytes();
+                        showInDebug("this.caCrt");
+                        showInDebug(MainActivity.this.caCrt.toString());
+                    }
+                    if (payloadType.equals("com.apple.security.root")) {
+                        showInDebug("Found the EAP-PEAP root certificate");
+                        MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
+                    }
+                }
                 configureWirelessConnectionWPA2PEAP();
             }
         }
@@ -846,6 +870,43 @@ public class MainActivity extends Activity {
         // https://stackoverflow.com/a/60773386
         // https://www.it-swarm.dev/fr/android/est-il-possible-dajouter-une-configuration-reseau-sur-android-q/811143688/
         preparePostSuggestion();
+
+        InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
+        BufferedInputStream bis = new BufferedInputStream(is);
+
+        CertificateFactory cf = null;
+        try {
+            cf = CertificateFactory.getInstance("X.509");
+        } catch (CertificateException e) {
+            e.printStackTrace();
+            showInBox("Error CC1:" + e.getMessage());
+        }
+
+        try {
+            while (bis.available() > 0) {
+                MainActivity.this.caCertificate = (java.security.cert.X509Certificate) cf.generateCertificate(bis);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showInBox("Error CC2:" + e.getMessage());
+        } catch (CertificateException e) {
+            e.printStackTrace();
+            showInBox("Error CC3:" + e.getMessage());
+        }
+
+        try {
+            bis.close();
+            is.close();
+        } catch (IOException e) {
+            // If this fails, it isn't the end of the world.
+            e.printStackTrace();
+            showInBox("Error CC4:" + e.getMessage());
+        }
+
+        showInDebug("\nMainActivity.this.serverCN\n");
+        showInDebug(MainActivity.this.caCertificate.toString());
+        showInDebug("\nMainActivity.this.serverCN\n");
+
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
 
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
@@ -854,6 +915,8 @@ public class MainActivity extends Activity {
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
         mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
+        mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
+        mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
 
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
