@@ -68,7 +68,7 @@ public class MainActivity extends Activity {
     private String password = "";
     private String caIssuer;
     private String caCrtName;
-    private String serverCN;
+    private String serverCN = "";
     private byte[] caCrt;
     private String ssid;
     private String tlsUsername;
@@ -464,7 +464,6 @@ public class MainActivity extends Activity {
 
             if (eapTypes.contains(Integer.valueOf(EAPTYPE_TLS))) {
                 showInDebug("Detected WPA EAP-TLS configuration");
-
                 // We skip the first section
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
@@ -498,13 +497,13 @@ public class MainActivity extends Activity {
                     if (payloadType.equals("com.apple.security.pkcs1")) {
                         showInDebug("Found the EAP-TLS root certificate");
                         MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
-                    } else {
-                        if (MainActivity.this.api_version >= 29) {
-                            showInBox("Your PacketFence server needs a patch or change manually the html/captive-portal/templates/wireless-profile-tls.xml and allow access to 'com.apple.security.pkcs1'");
-                        }
                     }
                 }
-                configureWirelessConnectionWPA2TLS();
+                if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version >= 29){
+                    misconfiguration();
+                } else {
+                    configureWirelessConnectionWPA2TLS();
+                }
 
             } else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
                 showInDebug("Detected WPA EAP-PEAP configuration");
@@ -667,6 +666,26 @@ public class MainActivity extends Activity {
         alertDialogAfterAPI29(suggestionsList);
     }
 
+    // Alert Dialog for server misconfiguration
+    public void misconfiguration() {
+        AlertDialog.Builder alertDialog0 = new AlertDialog.Builder(
+                MainActivity.this);
+        alertDialog0.setTitle("Server Misconfiguration");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your android version is not compatible with the current server settings\n");
+        sb.append("\n");
+        sb.append("Please contact your system administrator.\n");
+        alertDialog0.setMessage(sb);
+        final String mess = "Ok";
+        alertDialog0.setPositiveButton(mess,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.this.done_configuring = true;
+                    }
+                });
+        alertDialog0.show();
+    }
+
     // Alert Dialog for API 29 Part 1
     public void alertDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(
@@ -827,7 +846,6 @@ public class MainActivity extends Activity {
         // https://stackoverflow.com/a/60773386
         // https://www.it-swarm.dev/fr/android/est-il-possible-dajouter-une-configuration-reseau-sur-android-q/811143688/
         preparePostSuggestion();
-
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
 
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
@@ -846,7 +864,6 @@ public class MainActivity extends Activity {
 
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
-
         alertDialogAfterAPI29(suggestionsList);
     }
 
