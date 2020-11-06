@@ -513,8 +513,8 @@ public class MainActivity extends Activity {
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
                     String payloadType = (String) (config.get("PayloadType"));
-                    if (payloadType.equals("com.apple.security.ca")) {
-                        showInDebug("Found root certificate");
+                    if (payloadType.equals("com.apple.security.radius.ca")) {
+                        showInDebug("Found radius root certificate");
                         String caBytes = (String) config.get("PayloadContent");
 
                         String caCrtNoHead = new String(caBytes);
@@ -903,18 +903,12 @@ public class MainActivity extends Activity {
             showInBox("Error CC4:" + e.getMessage());
         }
 
-        showInDebug("\nMainActivity.this.serverCN\n");
-        showInDebug(MainActivity.this.caCertificate.toString());
-        showInDebug("\nMainActivity.this.serverCN\n");
-
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
-
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setAnonymousIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setPassword(MainActivity.this.password);
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
-        mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
         mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
         mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
 
