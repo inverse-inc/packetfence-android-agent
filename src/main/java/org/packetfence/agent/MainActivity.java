@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
     private String password = "";
     private String caIssuer;
     private String caCrtName;
+    private String serverCN = "";
     private byte[] caCrt;
     private String ssid;
     private String tlsUsername;
@@ -463,7 +464,6 @@ public class MainActivity extends Activity {
 
             if (eapTypes.contains(Integer.valueOf(EAPTYPE_TLS))) {
                 showInDebug("Detected WPA EAP-TLS configuration");
-
                 // We skip the first section
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
@@ -494,13 +494,45 @@ public class MainActivity extends Activity {
                         MainActivity.this.userP12Name = (String) config.get("PayloadDisplayName");
                         MainActivity.this.tlsUsername = (String) config.get("PayloadCertificateFileName");
                     }
+                    if (payloadType.equals("com.apple.security.pkcs1")) {
+                        showInDebug("Found the EAP-TLS root certificate");
+                        MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
+                    }
                 }
-                configureWirelessConnectionWPA2TLS();
+                if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version >= 29){
+                    misconfiguration();
+                } else {
+                    configureWirelessConnectionWPA2TLS();
+                }
 
             } else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
                 showInDebug("Detected WPA EAP-PEAP configuration");
                 MainActivity.this.tlsUsername = (String) eapClientConfigurationHashMap
                         .get("UserName");
+
+                for (int i = 1; i < categoryObj.length; i++) {
+                    HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
+                    String payloadType = (String) (config.get("PayloadType"));
+                    if (payloadType.equals("com.apple.security.radius.ca")) {
+                        showInDebug("Found radius root certificate");
+                        String caBytes = (String) config.get("PayloadContent");
+
+                        String caCrtNoHead = new String(caBytes);
+                        String caCrtStr = "";
+                        caCrtStr += "-----BEGIN CERTIFICATE-----\n";
+                        caCrtStr += caCrtNoHead;
+                        caCrtStr += "\n" +
+                                "-----END CERTIFICATE-----";
+
+                        MainActivity.this.caCrt = caCrtStr.getBytes();
+                        showInDebug("this.caCrt");
+                        showInDebug(MainActivity.this.caCrt.toString());
+                    }
+                    if (payloadType.equals("com.apple.security.root")) {
+                        showInDebug("Found the EAP-PEAP root certificate");
+                        MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
+                    }
+                }
                 configureWirelessConnectionWPA2PEAP();
             }
         }
@@ -644,6 +676,8 @@ public class MainActivity extends Activity {
 
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.NONE);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.TLS);
+        mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
+
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
                 .setWpa2EnterpriseConfig(mEnterpriseConfig)
@@ -654,6 +688,26 @@ public class MainActivity extends Activity {
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
         alertDialogAfterAPI29(suggestionsList);
+    }
+
+    // Alert Dialog for server misconfiguration
+    public void misconfiguration() {
+        AlertDialog.Builder alertDialog0 = new AlertDialog.Builder(
+                MainActivity.this);
+        alertDialog0.setTitle("Server Misconfiguration");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Your android version is not compatible with the current server settings\n");
+        sb.append("\n");
+        sb.append("Please contact your system administrator.\n");
+        alertDialog0.setMessage(sb);
+        final String mess = "Ok";
+        alertDialog0.setPositiveButton(mess,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        MainActivity.this.done_configuring = true;
+                    }
+                });
+        alertDialog0.show();
     }
 
     // Alert Dialog for API 29 Part 1
@@ -817,13 +871,46 @@ public class MainActivity extends Activity {
         // https://www.it-swarm.dev/fr/android/est-il-possible-dajouter-une-configuration-reseau-sur-android-q/811143688/
         preparePostSuggestion();
 
-        WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
+        InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
+        BufferedInputStream bis = new BufferedInputStream(is);
 
+        CertificateFactory cf = null;
+        try {
+            cf = CertificateFactory.getInstance("X.509");
+        } catch (CertificateException e) {
+            e.printStackTrace();
+            showInBox("Error CC1:" + e.getMessage());
+        }
+
+        try {
+            while (bis.available() > 0) {
+                MainActivity.this.caCertificate = (java.security.cert.X509Certificate) cf.generateCertificate(bis);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            showInBox("Error CC2:" + e.getMessage());
+        } catch (CertificateException e) {
+            e.printStackTrace();
+            showInBox("Error CC3:" + e.getMessage());
+        }
+
+        try {
+            bis.close();
+            is.close();
+        } catch (IOException e) {
+            // If this fails, it isn't the end of the world.
+            e.printStackTrace();
+            showInBox("Error CC4:" + e.getMessage());
+        }
+
+        WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setAnonymousIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setPassword(MainActivity.this.password);
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
+        mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
+        mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
 
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
@@ -834,7 +921,6 @@ public class MainActivity extends Activity {
 
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
-
         alertDialogAfterAPI29(suggestionsList);
     }
 
