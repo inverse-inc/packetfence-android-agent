@@ -509,7 +509,6 @@ public class MainActivity extends Activity {
                 showInDebug("Detected WPA EAP-PEAP configuration");
                 MainActivity.this.tlsUsername = (String) eapClientConfigurationHashMap
                         .get("UserName");
-
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
                     String payloadType = (String) (config.get("PayloadType"));
@@ -533,7 +532,11 @@ public class MainActivity extends Activity {
                         MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
                     }
                 }
-                configureWirelessConnectionWPA2PEAP();
+                if (MainActivity.this.caCrt==null && MainActivity.this.api_version >= 29){
+                    misconfiguration();
+                } else {
+                    configureWirelessConnectionWPA2PEAP();
+                }
             }
         }
         // Handling WPA-PSK
