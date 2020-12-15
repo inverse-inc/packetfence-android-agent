@@ -45,8 +45,9 @@ import java.util.List;
 
 public class MainActivity extends Activity {
 
-    private static final boolean isDebugMode = false;
-    private static final boolean isDebugSteps = false;
+    private boolean isDebugMode = false;
+    private boolean isDebugSteps = false;
+    private int debugCount = 0;
     private static final int FLOW_CA = 20;
     private static final int FLOW_BIB = 25;
     private static final int api_version = Build.VERSION.SDK_INT;
@@ -80,6 +81,35 @@ public class MainActivity extends Activity {
     private BroadcastReceiver broadcastReceiver;
     private String debugOutputSteps = "";
     private String debugConfigOutput = "";
+
+    /*
+     * Set DEBUG
+     */
+    public void changeDebugStatus(View view) {
+        System.out.println("change status");
+        if (debugCount<2){
+            debugCount+=1;
+        } else {
+            if (isDebugMode || isDebugSteps){
+                isDebugSteps = false;
+                isDebugMode = false;
+            } else {
+                isDebugSteps = true;
+                isDebugMode = true;
+            }
+            isDebugTextVisible(isDebugSteps);
+            debugCount=0;
+        }
+    }
+
+    public void isDebugTextVisible(boolean bool) {
+        TextView b = (TextView) findViewById(R.id.debug_text);
+        if (bool) {
+            b.setVisibility(View.VISIBLE);
+        } else {
+            b.setVisibility(View.INVISIBLE);
+        }
+    }
 
     /*
      * OVERRIDES
@@ -774,10 +804,10 @@ public class MainActivity extends Activity {
         sb.append("\nStep 1:\n");
         sb.append("The WiFi settings will open\n");
         sb.append("\nStep 2:\n");
-        sb.append("Allow PacketFence Agent to modify the WiFi configuration.\n" +
-                  "NOTE: On Android 10, the request is silent and will be in your notifications.\n");
-        sb.append("\nStep 3:\n");
         sb.append("Forget the current WiFi network you're connected on\n");
+        sb.append("\nStep 3:\n");
+        sb.append("Allow PacketFence Agent to modify the WiFi configuration.\n" +
+                "NOTE: On Android 10, the request is silent and will be in your notifications.\n");
         sb.append("\nStep 4:\n");
         sb.append("Ensure that your device is not connected to any WiFi network.\n");
         sb.append("\nStep 5:\n");
