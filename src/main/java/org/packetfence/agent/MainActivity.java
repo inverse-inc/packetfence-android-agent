@@ -86,10 +86,10 @@ public class MainActivity extends Activity {
      * Set DEBUG
      */
     public void changeDebugStatus(View view) {
-        System.out.println("change status");
         if (debugCount<2){
             debugCount+=1;
         } else {
+            showInBox("Change debug status");
             if (isDebugMode || isDebugSteps){
                 isDebugSteps = false;
                 isDebugMode = false;
@@ -183,7 +183,7 @@ public class MainActivity extends Activity {
     /*
      * SHOW INFORMATION
      */
-    public void showInDebug(String text) {
+    public void showInBoxIfDebug(String text) {
         if (isDebugMode) {
             showInBox(text);
             System.out.println(text);
@@ -205,23 +205,23 @@ public class MainActivity extends Activity {
     public void showNetworkError(int iman) {
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_INTERNAL) {
             showInBox("The packetfence agent suggestions had an internal error.");
-            showInDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_INTERNAL");
+            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_INTERNAL");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_APP_DISALLOWED) {
             showInBox("The packetfence agent suggestions are disallowed.");
-            showInDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_APP_DISALLOWED");
+            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_APP_DISALLOWED");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE) {
             showInBox("The packetfence agent has suggested a duplicate network.");
-            showInDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE");
+            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_EXCEEDS_MAX_PER_APP) {
             showInBox("The packetfence agent exceeds the maximum of network suggestions per application.");
-            showInDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_EXCEEDS_MAX_PER_APP");
+            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_EXCEEDS_MAX_PER_APP");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID) {
             showInBox("The " + this.ssid + " is not available in suggestions networks.");
-            showInDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID");
+            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID");
         }
         // Added in API 30
         /**
@@ -364,7 +364,7 @@ public class MainActivity extends Activity {
                         try {
                             URL url = new URL(response.headers.get("Location"));
                             MainActivity.this.profileDomainName = url.getHost();
-                            showInDebug("Found profile domain name: " + MainActivity.this.profileDomainName);
+                            showInBoxIfDebug("Found profile domain name: " + MainActivity.this.profileDomainName);
                             fetchXML();
                         } catch (MalformedURLException e) {
                             showInBox("Unable to detect profile domain name");
@@ -535,18 +535,18 @@ public class MainActivity extends Activity {
 
         // Handling WPA-PEAP and EAP-TLS
         if (eapClientConfigurationHashMap != null) {
-            showInDebug("Detected WPA EAP configuration");
+            showInBoxIfDebug("Detected WPA EAP configuration");
             ArrayList<?> eapTypes = (ArrayList<?>) eapClientConfigurationHashMap.get("AcceptEAPTypes");
 
             if (eapTypes.contains(Integer.valueOf(EAPTYPE_TLS))) {
-                showInDebug("Detected WPA EAP-TLS configuration");
+                showInBoxIfDebug("Detected WPA EAP-TLS configuration");
                 addTodebugConfigOutput("WPA EAP-TLS configuration");
                 // We skip the first section
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
                     String payloadType = (String) (config.get("PayloadType"));
                     if (payloadType.equals("com.apple.security.root")) {
-                        showInDebug("Found root certificate");
+                        showInBoxIfDebug("Found root certificate");
 
                         String caBytes = "-----BEGIN CERTIFICATE-----\n";
                         caBytes += (String) config.get("PayloadContent");
@@ -559,7 +559,7 @@ public class MainActivity extends Activity {
                         addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
                     }
                     if (payloadType.equals("com.apple.security.pkcs12")) {
-                        showInDebug("Found the EAP-TLS p12 certificate");
+                        showInBoxIfDebug("Found the EAP-TLS p12 certificate");
                         String p12BytesB64 = (String) config.get("PayloadContent");
                         byte[] p12Bytes = Base64.decode(p12BytesB64.getBytes(), Base64.DEFAULT);
 
@@ -570,7 +570,7 @@ public class MainActivity extends Activity {
                         addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
                     }
                     if (payloadType.equals("com.apple.security.pkcs1")) {
-                        showInDebug("Found the EAP-TLS root certificate");
+                        showInBoxIfDebug("Found the EAP-TLS root certificate");
                         MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
                         addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
                     }
@@ -582,7 +582,7 @@ public class MainActivity extends Activity {
                 }
 
             } else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
-                showInDebug("Detected WPA EAP-PEAP configuration");
+                showInBoxIfDebug("Detected WPA EAP-PEAP configuration");
                 addTodebugConfigOutput("WPA EAP-PEAP configuration");
                 MainActivity.this.tlsUsername = (String) eapClientConfigurationHashMap.get("UserName");
                 addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
@@ -590,7 +590,7 @@ public class MainActivity extends Activity {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
                     String payloadType = (String) (config.get("PayloadType"));
                     if (payloadType.equals("com.apple.security.radius.ca")) {
-                        showInDebug("Found radius root certificate");
+                        showInBoxIfDebug("Found radius root certificate");
                         String caBytes = "-----BEGIN CERTIFICATE-----\n";
                         caBytes += (String) config.get("PayloadContent");
                         caBytes += "\n";
@@ -600,7 +600,7 @@ public class MainActivity extends Activity {
                         addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
                     }
                     if (payloadType.equals("com.apple.security.root")) {
-                        showInDebug("Found the EAP-PEAP root certificate");
+                        showInBoxIfDebug("Found the EAP-PEAP root certificate");
                         MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
                         addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
                     }
@@ -614,7 +614,7 @@ public class MainActivity extends Activity {
         }
         // Handling WPA-PSK
         else {
-            showInDebug("WPA WPA-PSK configuration");
+            showInBoxIfDebug("WPA WPA-PSK configuration");
             MainActivity.this.password = (String) generalConfig.get("Password");
             configureWirelessConnectionWPAPSK();
         }
@@ -709,7 +709,7 @@ public class MainActivity extends Activity {
                     if (str.length >= 2) {
                         String key = str[0];
                         String value = str[1];
-                        showInDebug(key + " - " + value);
+                        showInBoxIfDebug(key + " - " + value);
                     }
                 }
                 */
@@ -1050,7 +1050,7 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2PEAPBeforeAPI29() {
-        showInDebug("Configuring " + MainActivity.this.ssid +
+        showInBoxIfDebug("Configuring " + MainActivity.this.ssid +
                 " with username " + MainActivity.this.tlsUsername +
                 " and password " + MainActivity.this.password);
 
@@ -1180,13 +1180,13 @@ public class MainActivity extends Activity {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                showInDebug("Connection Suggestion Succeeded before");
+                showInBoxIfDebug("Connection Suggestion Succeeded before");
                 String b = intent.getAction();
-                showInDebug("Connection Suggestion Succeeded boolean " + b);
+                showInBoxIfDebug("Connection Suggestion Succeeded boolean " + b);
                 if (!b.equals(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION)) {
                     return;
                 }
-                showInDebug("Connection Suggestion Succeeded");
+                showInBoxIfDebug("Connection Suggestion Succeeded");
             }
         };
         MainActivity.this.broadcastReceiver = broadcastReceiver;
@@ -1198,18 +1198,18 @@ public class MainActivity extends Activity {
 
         int status = wifiManager.addNetworkSuggestions(suggestionsList);
         if (status == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE) {
-            showInDebug("Suggestion Update Needed");
+            showInBoxIfDebug("Suggestion Update Needed");
             status = wifiManager.removeNetworkSuggestions(suggestionsList);
-            showInDebug("WifiNetworkSuggestion Removing Network suggestions status is " + status);
+            showInBoxIfDebug("WifiNetworkSuggestion Removing Network suggestions status is " + status);
             status = wifiManager.addNetworkSuggestions(suggestionsList);
         }
         if (status == WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
-            showInDebug("Suggestion Added " + MainActivity.this.ssid);
+            showInBoxIfDebug("Suggestion Added " + MainActivity.this.ssid);
             startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), MainActivity.this.FLOW_BIB);
         }
         if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
-            showInDebug("Too bad !");
-            showInDebug("Status " + status);
+            showInBoxIfDebug("Too bad !");
+            showInBoxIfDebug("Status " + status);
             showNetworkError(status);
         }
         MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
@@ -1220,14 +1220,14 @@ public class MainActivity extends Activity {
     public void enableWifiConfiguration(WifiConfiguration config) {
         WifiManager wifi = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
 
-        showInDebug(config.toString());
+        showInBoxIfDebug(config.toString());
         try {
             int id = wifi.addNetwork(config);
             if (id < 0) {
-                showInDebug("Error creating new network.");
+                showInBoxIfDebug("Error creating new network.");
                 showInBox("Error: Cannot create the new network with ssid " + config.SSID);
             } else {
-                showInDebug("Created network with ID of " + id);
+                showInBoxIfDebug("Created network with ID of " + id);
                 showInBox("Success ! Created new network " + config.SSID + "!");
                 wifi.saveConfiguration();
                 wifi.enableNetwork(id, true);
