@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
     /*
      * Set DEBUG
      */
-    public void changeDebugStatus(View view) {
+    public void changeDebugStatus() {
         if (debugCount<2){
             debugCount+=1;
         } else {
@@ -103,7 +103,7 @@ public class MainActivity extends Activity {
     }
 
     public void updateDebugTextVisible(boolean bool) {
-        TextView b = (TextView) findViewById(R.id.debug_text);
+        TextView b = findViewById(R.id.debug_text);
         if (bool) {
             b.setVisibility(View.VISIBLE);
         } else {
@@ -163,7 +163,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void quit(View view) {
+    public void quit() {
         //System.exit(0);
         stopApplicationAfterSeconds(2);
     }
@@ -198,7 +198,7 @@ public class MainActivity extends Activity {
     }
 
     public void enableConfigButton(boolean bool) {
-        Button b = (Button) findViewById(R.id.button1);
+        Button b = findViewById(R.id.button1);
         b.setEnabled(bool);
     }
 
@@ -540,35 +540,37 @@ public class MainActivity extends Activity {
                 // We skip the first section
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
-                    String payloadType = (String) (config.get("PayloadType"));
-                    if (payloadType.equals("com.apple.security.root")) {
-                        showInBoxIfDebug("Found root certificate");
+                    if (config.containsKey("PayloadType")) {
+                        String payloadType = (String) (config.get("PayloadType"));
+                        if (payloadType!=null && payloadType.equals("com.apple.security.root")) {
+                            showInBoxIfDebug("Found root certificate");
 
-                        String caBytes = "-----BEGIN CERTIFICATE-----\n";
-                        caBytes += (String) config.get("PayloadContent");
-                        caBytes += "\n";
-                        caBytes += "-----END CERTIFICATE-----";
+                            String caBytes = "-----BEGIN CERTIFICATE-----\n";
+                            caBytes += (String) config.get("PayloadContent");
+                            caBytes += "\n";
+                            caBytes += "-----END CERTIFICATE-----";
 
-                        MainActivity.this.caCrt = caBytes.getBytes();
-                        MainActivity.this.caCrtName = (String) config.get("PayloadIdentifier");
-                        MainActivity.this.caCrtName = MainActivity.this.caCrtName.replace('.', '-');
-                        addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
-                    }
-                    if (payloadType.equals("com.apple.security.pkcs12")) {
-                        showInBoxIfDebug("Found the EAP-TLS p12 certificate");
-                        String p12BytesB64 = (String) config.get("PayloadContent");
-                        byte[] p12Bytes = Base64.decode(p12BytesB64.getBytes(), Base64.DEFAULT);
+                            MainActivity.this.caCrt = caBytes.getBytes();
+                            MainActivity.this.caCrtName = (String) config.get("PayloadIdentifier");
+                            MainActivity.this.caCrtName = MainActivity.this.caCrtName.replace('.', '-');
+                            addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
+                        }
+                        if (payloadType!=null && payloadType.equals("com.apple.security.pkcs12")) {
+                            showInBoxIfDebug("Found the EAP-TLS p12 certificate");
+                            String p12BytesB64 = (String) config.get("PayloadContent");
+                            byte[] p12Bytes = Base64.decode(p12BytesB64.getBytes(), Base64.DEFAULT);
 
-                        MainActivity.this.userP12 = p12Bytes;
-                        MainActivity.this.userP12Name = (String) config.get("PayloadDisplayName");
-                        MainActivity.this.tlsUsername = (String) config.get("PayloadCertificateFileName");
-                        addTodebugConfigOutput("userP12Name >>"+MainActivity.this.userP12Name);
-                        addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
-                    }
-                    if (payloadType.equals("com.apple.security.pkcs1")) {
-                        showInBoxIfDebug("Found the EAP-TLS root certificate");
-                        MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
-                        addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
+                            MainActivity.this.userP12 = p12Bytes;
+                            MainActivity.this.userP12Name = (String) config.get("PayloadDisplayName");
+                            MainActivity.this.tlsUsername = (String) config.get("PayloadCertificateFileName");
+                            addTodebugConfigOutput("userP12Name >>"+MainActivity.this.userP12Name);
+                            addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
+                        }
+                        if (payloadType!=null && payloadType.equals("com.apple.security.pkcs1")) {
+                            showInBoxIfDebug("Found the EAP-TLS root certificate");
+                            MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
+                            addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
+                        }
                     }
                 }
                 if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version >= 29){
@@ -584,21 +586,23 @@ public class MainActivity extends Activity {
                 addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
-                    String payloadType = (String) (config.get("PayloadType"));
-                    if (payloadType.equals("com.apple.security.radius.ca")) {
-                        showInBoxIfDebug("Found radius root certificate");
-                        String caBytes = "-----BEGIN CERTIFICATE-----\n";
-                        caBytes += (String) config.get("PayloadContent");
-                        caBytes += "\n";
-                        caBytes += "-----END CERTIFICATE-----";
+                    if (config.containsKey("PayloadType")) {
+                        String payloadType = (String) (config.get("PayloadType"));
+                        if (payloadType!=null && payloadType.equals("com.apple.security.radius.ca")) {
+                            showInBoxIfDebug("Found radius root certificate");
+                            String caBytes = "-----BEGIN CERTIFICATE-----\n";
+                            caBytes += (String) config.get("PayloadContent");
+                            caBytes += "\n";
+                            caBytes += "-----END CERTIFICATE-----";
 
-                        MainActivity.this.caCrt = caBytes.getBytes();
-                        addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
-                    }
-                    if (payloadType.equals("com.apple.security.root")) {
-                        showInBoxIfDebug("Found the EAP-PEAP root certificate");
-                        MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
-                        addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
+                            MainActivity.this.caCrt = caBytes.getBytes();
+                            addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
+                        }
+                        if (payloadType!=null && payloadType.equals("com.apple.security.root")) {
+                            showInBoxIfDebug("Found the EAP-PEAP root certificate");
+                            MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
+                            addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
+                        }
                     }
                 }
                 if (MainActivity.this.caCrt==null && MainActivity.this.api_version >= 29){
@@ -682,7 +686,7 @@ public class MainActivity extends Activity {
     }
 
     public void computeUserCertAndKey() {
-        KeyStore p12 = null;
+        KeyStore p12;
         boolean certIsGood = false;
         try {
             p12 = KeyStore.getInstance("pkcs12");
