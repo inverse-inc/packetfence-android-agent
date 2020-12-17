@@ -85,7 +85,7 @@ public class MainActivity extends Activity {
     /*
      * Set DEBUG
      */
-    public void changeDebugStatus() {
+    public void changeDebugStatus(View view) {
         if (debugCount<2){
             debugCount+=1;
         } else {
@@ -163,7 +163,7 @@ public class MainActivity extends Activity {
         }
     }
 
-    public void quit() {
+    public void quit(View view) {
         //System.exit(0);
         stopApplicationAfterSeconds(2);
     }
