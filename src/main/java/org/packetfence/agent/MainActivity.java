@@ -384,7 +384,6 @@ public class MainActivity extends Activity {
         });
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         queue.add(stringRequest);
-        //MainActivity.this.done_configuring = true;
     }
 
     /*
@@ -416,7 +415,6 @@ public class MainActivity extends Activity {
                     showInBox("Error fetching profile ");
                 }
                 showDebugOrExit();
-                //MainActivity.this.done_configuring = true;
             }
         });
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
@@ -431,7 +429,6 @@ public class MainActivity extends Activity {
             showInBox("Unable to fetch configuration profile.");
             showDebugOrExit();
         }
-        //MainActivity.this.done_configuring = true;
     }
 
     public Object[] parseXML(String xml) {
@@ -496,7 +493,6 @@ public class MainActivity extends Activity {
     public void configureWEPAfterAPI29() {
         showInBox("It is no more supported by the Android API");
         showDebugOrExit();
-        //MainActivity.this.done_configuring = true;
     }
 
     public void configureWEPBeforeAPI29() {
@@ -682,7 +678,6 @@ public class MainActivity extends Activity {
         } else {
             showInBox("The certificate is not computed. The configuration will stop.");
             showDebugOrExit();
-            //MainActivity.this.done_configuring = true;
         }
     }
 
@@ -699,21 +694,6 @@ public class MainActivity extends Activity {
                 MainActivity.this.userCertificate = (java.security.cert.X509Certificate) p12.getCertificate(alias);
                 MainActivity.this.userPrivateKey = (PrivateKey) p12.getKey(alias,
                         MainActivity.this.password.toCharArray());
-
-                // We are not using the code below
-                /*
-                Principal subject = this.userCertificate.getSubjectDN();
-                String subjectArray[] = subject.toString().split(",");
-                for (String s : subjectArray) {
-                    String[] str = s.trim().split("=");
-                    if (str.length >= 2) {
-                        String key = str[0];
-                        String value = str[1];
-                        showInBoxIfDebug(key + " - " + value);
-                    }
-                }
-                */
-                // TODO: what is it for ?
             }
             certIsGood = true;
         } catch (KeyStoreException e) {
@@ -745,7 +725,6 @@ public class MainActivity extends Activity {
         } else {
             showInBox("The certificate is not extracted. The configuration will stop.");
             showDebugOrExit();
-            //MainActivity.this.done_configuring = true;
         }
     }
 
@@ -792,7 +771,6 @@ public class MainActivity extends Activity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         showDebugOrExit();
-                        //MainActivity.this.done_configuring = true;
                     }
                 });
         alertMiss.show();
@@ -960,7 +938,6 @@ public class MainActivity extends Activity {
             configureWPA2TLSBeforeAPI29();
         } else if (requestCode == MainActivity.this.FLOW_BIB) {
             showDebugOrExit();
-            //MainActivity.this.done_configuring = true;
         }
 
     }
@@ -1214,7 +1191,6 @@ public class MainActivity extends Activity {
         }
         MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
         showDebugOrExit();
-        //MainActivity.this.done_configuring = true;
     }
 
     public void enableWifiConfiguration(WifiConfiguration config) {
@@ -1236,7 +1212,6 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
         showDebugOrExit();
-        //MainActivity.this.done_configuring = true;
     }
 
 }
