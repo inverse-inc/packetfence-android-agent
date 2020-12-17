@@ -433,7 +433,7 @@ public class MainActivity extends Activity {
 
     public Object[] parseXML(String xml) {
         //public void parseXML(String xml) {
-        Object categoryObj[] = new Object[0];
+        Object[] categoryObj = new Object[0];
         try {
             HashMap<?, ?> hashMap = (HashMap<?, ?>) Plist.objectFromXml(xml);
 
