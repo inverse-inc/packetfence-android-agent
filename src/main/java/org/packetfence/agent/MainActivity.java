@@ -97,12 +97,12 @@ public class MainActivity extends Activity {
                 isDebugSteps = true;
                 isDebugMode = true;
             }
-            isDebugTextVisible(isDebugSteps);
+            updateDebugTextVisible(isDebugSteps);
             debugCount=0;
         }
     }
 
-    public void isDebugTextVisible(boolean bool) {
+    public void updateDebugTextVisible(boolean bool) {
         TextView b = (TextView) findViewById(R.id.debug_text);
         if (bool) {
             b.setVisibility(View.VISIBLE);
