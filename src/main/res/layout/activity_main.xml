@@ -37,5 +37,15 @@
             android:visibility="visible" android:layout_centerHorizontal="true"
             android:layout_alignBottom="@id/imageView1" android:layout_alignParentRight="true"
             android:textSize="14sp"/>
+    <Button
+            android:layout_width="150dp"
+            android:layout_height="134dp" android:id="@+id/button_debug"
+            android:onClick="changeDebugStatus" android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true" android:background="@android:color/transparent"/>
+    <TextView
+            android:text="Debug mode is activated"
+            android:layout_width="163dp"
+            android:layout_height="wrap_content" android:id="@+id/debug_text" android:layout_alignParentTop="true"
+            android:layout_centerInParent="true" tools:visibility="invisible" android:visibility="invisible"/>
 
 </RelativeLayout>
