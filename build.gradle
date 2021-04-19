@@ -68,7 +68,7 @@ android {
         applicationId 'org.packetfence.agent'
 
         // Defines the minimum API level required to run the app.
-        minSdkVersion 14
+        minSdkVersion 18
 
         // Specifies the API level used to test the app.
         targetSdkVersion 30
