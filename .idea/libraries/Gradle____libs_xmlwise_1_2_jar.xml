@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="Gradle: ./libs/xmlwise-1_2.jar">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/libs/xmlwise-1_2.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
