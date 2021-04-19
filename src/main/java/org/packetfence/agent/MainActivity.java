@@ -90,6 +90,7 @@ public class MainActivity extends Activity {
     private PrivateKey userPrivateKey;
     private X509Certificate userCertificate;
     private X509Certificate caCertificate;
+    private byte[] caCertificateEncoded;
     private BroadcastReceiver broadcastReceiver;
     private String debugOutputSteps = "";
     private String debugConfigOutput = "";
@@ -621,6 +622,7 @@ public class MainActivity extends Activity {
                         String payloadType = (String) (config.get("PayloadType"));
                         if (payloadType!=null && payloadType.equals("com.apple.security.radius.ca")) {
                             showInBoxIfDebug("Found radius root certificate");
+                            
                             String caBytes = "-----BEGIN CERTIFICATE-----\n";
                             caBytes += (String) config.get("PayloadContent");
                             caBytes += "\n";
@@ -664,14 +666,25 @@ public class MainActivity extends Activity {
         alert02.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 MainActivity.this.password = input.getText().toString();
-                computeCaCert();
+                if (setCaCert() && setUserCertAndKey()) {
+                    if (MainActivity.this.api_version >= 29) {
+                        configureWPA2TLSAfterAPI29();
+                    } else if (MainActivity.this.api_version > 19 && MainActivity.this.api_version < 29) {
+                        configureWPA2TLSAPI20();
+                    } else {
+                        configureWPA2TLSBeforeAPI20();
+                    }
+                } else {
+                    showDebugOrExit();
+                }
             }
         });
         alert02.show();
     }
 
+
     // Compute and transform certificates
-    public void computeCaCert() {
+    public boolean setCaCert() {
         try {
             InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
             BufferedInputStream bis = new BufferedInputStream(is);
@@ -679,18 +692,19 @@ public class MainActivity extends Activity {
             while (bis.available() > 0) {
                 MainActivity.this.caCertificate = (X509Certificate) cf.generateCertificate(bis);
             }
+            MainActivity.this.caCertificateEncoded = MainActivity.this.caCertificate.getEncoded();
             bis.close();
             is.close();
-            computeUserCertAndKey();
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             showInBox("Error CC:" + e.getMessage());
             showInBox("The certificate is not computed. The configuration will stop.");
-            showDebugOrExit();
         }
+        return false;
     }
 
-    public void computeUserCertAndKey() {
+    public boolean setUserCertAndKey() {
         try {
             KeyStore p12;
             p12 = KeyStore.getInstance("pkcs12");
@@ -704,20 +718,21 @@ public class MainActivity extends Activity {
                 MainActivity.this.userPrivateKey = (PrivateKey) p12.getKey(alias,
                         MainActivity.this.password.toCharArray());
             }
-
-            if (MainActivity.this.api_version >= 29) {
-                configureWPA2TLSAfterAPI29();
-            } else if (MainActivity.this.api_version > 19 && MainActivity.this.api_version < 29) {
-                configureWPA2TLSAPI20();
-            } else {
-                configureWPA2TLSBeforeAPI20();
-            }
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             showInBox("Error CK1:" + e.getMessage());
             showInBox("The certificate and key is not extracted. The configuration will stop.");
-            showDebugOrExit();
         }
+        return false;
+    }
+
+    public boolean setCaIssuer() {
+        if (setCaCert()) {
+            MainActivity.this.caIssuer = MainActivity.this.caCertificate.getIssuerDN().getName();
+            return true;
+        }
+        return false;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
@@ -984,6 +999,16 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2TLSAPI20() {
+        if (setCaIssuer()){
+            String displayName = MainActivity.this.userP12Name;
+            Intent installIntent = KeyChain.createInstallIntent();
+            installIntent.putExtra(KeyChain.EXTRA_NAME, displayName);
+            installIntent.putExtra(KeyChain.EXTRA_CERTIFICATE, MainActivity.this.caCertificateEncoded);
+            startActivityForResult(installIntent, MainActivity.this.FLOW_CA);
+        } else {
+            showDebugOrExit();
+        }
+        /*
         try {
             InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
             BufferedInputStream bis = new BufferedInputStream(is);
@@ -1006,6 +1031,7 @@ public class MainActivity extends Activity {
             showInBox("The certificate is not computed. The configuration will stop.");
             showDebugOrExit();
         }
+        */
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -1051,46 +1077,29 @@ public class MainActivity extends Activity {
 
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void configureWPA2PEAPAfterAPI29() {
-        InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
-        BufferedInputStream bis = new BufferedInputStream(is);
+        if (setCaCert()) {
+            WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
+            mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
+            mEnterpriseConfig.setAnonymousIdentity(MainActivity.this.tlsUsername);
+            mEnterpriseConfig.setPassword(MainActivity.this.password);
+            mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
+            mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
+            mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
+            mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
 
-        CertificateFactory cf = null;
-        try {
-            InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
-            BufferedInputStream bis = new BufferedInputStream(is);
-            CertificateFactory cf = null;
-            cf = CertificateFactory.getInstance("X.509");
-            while (bis.available() > 0) {
-                MainActivity.this.caCertificate = (X509Certificate) cf.generateCertificate(bis);
-            }
-            bis.close();
-            is.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showInBox("Error CC1:" + e.getMessage());
-            showInBox("The certificate is not computed. The configuration will stop.");
+            final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
+                    .setSsid(MainActivity.this.ssid)
+                    .setWpa2EnterpriseConfig(mEnterpriseConfig)
+                    .setIsAppInteractionRequired(false)
+                    .setPriority(100)
+                    .build();
+
+            final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
+            suggestionsList.add(suggestion);
+            alertDialogAfterAPI29(suggestionsList);
+        } else {
             showDebugOrExit();
         }
-
-        WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
-        mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
-        mEnterpriseConfig.setAnonymousIdentity(MainActivity.this.tlsUsername);
-        mEnterpriseConfig.setPassword(MainActivity.this.password);
-        mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
-        mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
-        mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
-        mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
-
-        final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
-                .setSsid(MainActivity.this.ssid)
-                .setWpa2EnterpriseConfig(mEnterpriseConfig)
-                .setIsAppInteractionRequired(false)
-                .setPriority(100)
-                .build();
-
-        final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
-        suggestionsList.add(suggestion);
-        alertDialogAfterAPI29(suggestionsList);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -1201,6 +1210,8 @@ public class MainActivity extends Activity {
         final int status = wifiManager.removeNetworkSuggestions(suggestionsList);
         if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
             if (MainActivity.this.isDebugMode) showNetworkError(status);
+        } else {
+            showInBox("Success ! Configuration Cleared for " + MainActivity.this.ssid + "!");
         }
     }
 
