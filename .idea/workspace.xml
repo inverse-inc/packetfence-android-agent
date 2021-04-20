@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+<<<<<<< HEAD
+=======
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
+>>>>>>> e9d3eb4 (Missng files from idea)
   <component name="AndroidLayouts">
     <shared>
       <config />
@@ -9,7 +15,11 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="AutoImportSettings">
+<<<<<<< HEAD
     <option name="autoReloadType" value="NONE" />
+=======
+    <option name="autoReloadType" value="SELECTIVE" />
+>>>>>>> e9d3eb4 (Missng files from idea)
   </component>
   <component name="BranchesTreeState">
     <expand>
@@ -26,11 +36,14 @@
         <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
       </path>
+<<<<<<< HEAD
       <path>
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="GROUP_NODE:upstream" type="e8cecc67:BranchNodeDescriptor" />
       </path>
+=======
+>>>>>>> e9d3eb4 (Missng files from idea)
     </expand>
     <select />
   </component>
@@ -41,6 +54,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="989caea0-4dd5-41d8-885f-32d7851267d8" name="Default" comment="update app">
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" afterDir="false" />
@@ -85,6 +99,29 @@
       <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packetfence-android-agent.iml" beforeDir="false" afterPath="$PROJECT_DIR$/packetfence-android-agent.iml" afterDir="false" />
+=======
+      <change afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____libs_volley_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle____libs_xmlwise_1_2_jar.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_1_1_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/packetfence-android-agent.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.5/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.5/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.5/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.5/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.5/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.5/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.5/javaCompile/classAnalysis.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.5/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.5/javaCompile/javaCompile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
+>>>>>>> e9d3eb4 (Missng files from idea)
       <change beforePath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -101,7 +138,16 @@
   <component name="ExternalProjectsManager">
     <system id="GRADLE">
       <state>
+<<<<<<< HEAD
         <projects_view />
+=======
+        <projects_view>
+          <tree_state>
+            <expand />
+            <select />
+          </tree_state>
+        </projects_view>
+>>>>>>> e9d3eb4 (Missng files from idea)
       </state>
     </system>
   </component>
@@ -113,7 +159,11 @@
     </option>
   </component>
   <component name="GenerateSignedApkSettings">
+<<<<<<< HEAD
     <option name="KEY_STORE_PATH" value="$USER_HOME$/Downloads/Inverse.keystore" />
+=======
+    <option name="KEY_STORE_PATH" value="$PROJECT_DIR$/../../inverse/android/Inverse.keystore" />
+>>>>>>> e9d3eb4 (Missng files from idea)
     <option name="KEY_ALIAS" value="main" />
     <option name="REMEMBER_PASSWORDS" value="true" />
     <option name="BUILD_TARGET_KEY" value="apk" />
@@ -123,17 +173,28 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1gJvWWPRlxmAqeLCJ1TbW2GGQIB" />
+<<<<<<< HEAD
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+=======
+>>>>>>> e9d3eb4 (Missng files from idea)
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="ApkExportedModule" value="packetfence-android-agent" />
+<<<<<<< HEAD
     <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="ae1d325f" />
     <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-09-14T14:35:18.753476Z" />
+=======
+    <property name="DEBUGGABLE_DEVICE" value="oneplus-in2025-ae1d325f" />
+    <property name="DEBUGGABLE_PROCESS" value="org.packetfence.agent" />
+    <property name="DEBUGGER_ID" value="Java" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="ae1d325f" />
+    <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2020-12-14T17:25:51.668738Z" />
+>>>>>>> e9d3eb4 (Missng files from idea)
     <property name="ExportApk.ApkPath" value="$PROJECT_DIR$" />
     <property name="ExportApk.BuildType" value="release" />
     <property name="ExportApk.BuildVariants" value="release" />
@@ -142,6 +203,7 @@
     <property name="ExportApk.SignV2" value="true" />
     <property name="ResourceManagerPrefKey.ResourceType" value="ANIM" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+<<<<<<< HEAD
     <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
@@ -156,6 +218,39 @@
     <property name="sync.plugin.last.upgrade.timestamp" value="1586780879512" />
   </component>
   <component name="RunManager">
+=======
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="SHOW_ALL_PROCESSES" value="false" />
+    <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
+    <property name="device.picker.selection" value="00c6410d3748caf8" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="memory.settings.postsync.do.not.ask.for.project" value="true" />
+    <property name="memory.settings.postsync.last.time.stamp" value="1607955782697" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="android.project.structure" />
+    <property name="sync.plugin.last.upgrade.timestamp" value="1586780879512" />
+  </component>
+  <component name="PsdUISettings">
+    <option name="MODULE_TAB" value="Signing Configs" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="org.packetfence.agent" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="TEST_OBJECT" value="class" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+>>>>>>> e9d3eb4 (Missng files from idea)
     <configuration default="true" type="AndroidJUnit" factoryName="Android JUnit">
       <option name="TEST_OBJECT" value="class" />
       <option name="WORKING_DIRECTORY" value="$MODULE_DIR$" />
@@ -164,24 +259,40 @@
       </method>
     </configuration>
     <configuration name="packetfence-android-agent" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+<<<<<<< HEAD
       <module name="packetfence-android-agent.main" />
+=======
+      <module name="packetfence-android-agent" />
+>>>>>>> e9d3eb4 (Missng files from idea)
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
       <option name="DEPLOY_AS_INSTANT" value="false" />
       <option name="ARTIFACT_NAME" value="" />
       <option name="PM_INSTALL_OPTIONS" value="" />
       <option name="ALL_USERS" value="false" />
+<<<<<<< HEAD
       <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
+=======
+>>>>>>> e9d3eb4 (Missng files from idea)
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+<<<<<<< HEAD
       <option name="INSPECTION_WITHOUT_ACTIVITY_RESTART" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
       <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
       <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
       <option name="DEBUGGER_TYPE" value="Auto" />
+=======
+      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
+      <option name="FORCE_STOP_RUNNING_APP" value="true" />
+      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Java" />
+>>>>>>> e9d3eb4 (Missng files from idea)
       <Auto>
         <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
         <option name="SHOW_STATIC_VARS" value="true" />
@@ -208,7 +319,11 @@
         <option name="ADVANCED_PROFILING_ENABLED" value="false" />
         <option name="STARTUP_PROFILING_ENABLED" value="false" />
         <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
+<<<<<<< HEAD
         <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+=======
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sampled (Java)" />
+>>>>>>> e9d3eb4 (Missng files from idea)
         <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
         <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
       </Profilers>
@@ -226,6 +341,7 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+<<<<<<< HEAD
     <configuration default="true" type="JUnit" factoryName="JUnit">
       <option name="TEST_OBJECT" value="class" />
       <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
@@ -233,6 +349,8 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+=======
+>>>>>>> e9d3eb4 (Missng files from idea)
     <configuration default="true" type="TestNG">
       <option name="TEST_OBJECT" value="CLASS" />
       <option name="VM_PARAMETERS" />
@@ -244,7 +362,11 @@
       </method>
     </configuration>
   </component>
+<<<<<<< HEAD
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+=======
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+>>>>>>> e9d3eb4 (Missng files from idea)
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -274,4 +396,65 @@
     <MESSAGE value="update app" />
     <option name="LAST_COMMIT_MESSAGE" value="update app" />
   </component>
+<<<<<<< HEAD
+=======
+  <component name="WindowStateProjectService">
+    <state x="588" y="199" key="#Plugins" timestamp="1618841310552">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state x="588" y="199" key="#Plugins/57.23.1863.1057@57.23.1863.1057" timestamp="1618841310552" />
+    <state x="669" y="240" key="#packetfence-android-agent" timestamp="1618404572483">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state x="669" y="240" key="#packetfence-android-agent/57.23.1863.1057@57.23.1863.1057" timestamp="1618404572483" />
+    <state width="1821" height="231" key="GridCell.Tab.0.bottom" timestamp="1618863975798">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.0.bottom/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975798" />
+    <state width="1821" height="231" key="GridCell.Tab.0.center" timestamp="1618863975797">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.0.center/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975797" />
+    <state width="1821" height="231" key="GridCell.Tab.0.left" timestamp="1618863975797">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.0.left/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975797" />
+    <state width="1821" height="231" key="GridCell.Tab.0.right" timestamp="1618863975797">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.0.right/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975797" />
+    <state width="1821" height="231" key="GridCell.Tab.1.bottom" timestamp="1618863975798">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.1.bottom/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975798" />
+    <state width="1821" height="231" key="GridCell.Tab.1.center" timestamp="1618863975798">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.1.center/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975798" />
+    <state width="1821" height="231" key="GridCell.Tab.1.left" timestamp="1618863975798">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.1.left/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975798" />
+    <state width="1821" height="231" key="GridCell.Tab.1.right" timestamp="1618863975798">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="1821" height="231" key="GridCell.Tab.1.right/57.23.1863.1057@57.23.1863.1057" timestamp="1618863975798" />
+    <state x="771" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1618426003615">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state x="771" y="472" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/57.23.1863.1057@57.23.1863.1057" timestamp="1618426003615" />
+    <state width="600" height="428" key="javadoc.popup" timestamp="1618405937250">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state width="600" height="428" key="javadoc.popup/57.23.1863.1057@57.23.1863.1057" timestamp="1618405937250" />
+    <state x="653" y="256" key="run.anything.popup" timestamp="1618845170170">
+      <screen x="57" y="23" width="1863" height="1057" />
+    </state>
+    <state x="653" y="256" key="run.anything.popup/57.23.1863.1057@57.23.1863.1057" timestamp="1618845170170" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+>>>>>>> e9d3eb4 (Missng files from idea)
 </project>
