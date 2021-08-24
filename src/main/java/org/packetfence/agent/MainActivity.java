@@ -361,13 +361,21 @@ public class MainActivity extends Activity {
                     @Override
                     public void onResponse(DiscoveryStringRequest.ResponseM response) {
                         showInBox("Profile domain name probe was successful");
+                        String location = null;
+                        if(response.headers.get("Location") != null) {
+                            location = response.headers.get("Location");
+                        }
+                        else if (response.headers.get("location") != null) {
+                            location = response.headers.get("location");
+                        }
                         try {
-                            URL url = new URL(response.headers.get("Location"));
+                            showInBoxIfDebug("Found location header value: " + location);
+                            URL url = new URL(location);
                             MainActivity.this.profileDomainName = url.getHost();
-                            showInBoxIfDebug("Found profile domain name: " + MainActivity.this.profileDomainName);
+                            showInBoxIfDebug("Found domain name: " + MainActivity.this.profileDomainName);
                             fetchXML();
                         } catch (MalformedURLException e) {
-                            showInBox("Unable to detect profile domain name");
+                            showInBox("Unable to detect domain name from domain probe");
                             showDebugOrExit();
                         }
                     }
