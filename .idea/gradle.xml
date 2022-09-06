@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
 <<<<<<< HEAD
+<<<<<<< HEAD
   <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
@@ -13,6 +14,13 @@
       <GradleProjectSettings>
         <option name="testRunner" value="PLATFORM" />
 >>>>>>> efc2f64 (It looks that idea is back even on Android Studio :))
+=======
+  <component name="GradleMigrationSettings" migrationVersion="1" />
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="testRunner" value="GRADLE" />
+>>>>>>> 6b54d4b (IDE android studio updates)
         <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleJvm" value="11" />
@@ -22,10 +30,13 @@
           </set>
         </option>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
         <option name="resolveModulePerSourceSet" value="false" />
         <option name="useQualifiedModuleNames" value="true" />
 >>>>>>> efc2f64 (It looks that idea is back even on Android Studio :))
+=======
+>>>>>>> 6b54d4b (IDE android studio updates)
       </GradleProjectSettings>
     </option>
   </component>

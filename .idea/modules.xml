@@ -9,7 +9,13 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/packetfence-android-agent.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.unitTest.iml" />
 =======
       <module fileurl="file://$PROJECT_DIR$/.idea/packetfence-android-agent.iml" filepath="$PROJECT_DIR$/.idea/packetfence-android-agent.iml" />
+<<<<<<< HEAD
 >>>>>>> efc2f64 (It looks that idea is back even on Android Studio :))
+=======
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/packetfence-android-agent.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/packetfence-android-agent.main.iml" filepath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/packetfence-android-agent.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.unitTest.iml" />
+>>>>>>> 6b54d4b (IDE android studio updates)
     </modules>
   </component>
 </project>

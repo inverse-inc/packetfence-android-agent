@@ -24,7 +24,11 @@
     <content url="file://$MODULE_DIR$/../../src">
       <sourceFolder url="file://$MODULE_DIR$/../../src" isTestSource="false" />
     </content>
+<<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Android API 30 Platform" jdkType="Android SDK" />
+=======
+    <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
+>>>>>>> 6b54d4b (IDE android studio updates)
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library>
