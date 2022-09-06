@@ -60,6 +60,7 @@
     <list default="true" id="989caea0-4dd5-41d8-885f-32d7851267d8" name="Default" comment="update app">
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" afterDir="false" />
@@ -151,6 +152,8 @@
       <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
 >>>>>>> e9d3eb4 (Missng files from idea)
+=======
+>>>>>>> 4a5ff81 (IDE android studio updates 3)
       <change beforePath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
