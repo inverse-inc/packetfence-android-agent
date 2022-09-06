@@ -528,12 +528,13 @@ public class MainActivity extends Activity {
     // Alert Dialog for API 29 Part 2
     @RequiresApi(api = Build.VERSION_CODES.Q)
     public void howToDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
+        String currentSSid = MainActivity.this.ssid;
         StringBuilder sb = new StringBuilder();
         sb.append("If you want to forget the WiFi network:");
-        sb.append("\nTo forget " + MainActivity.this.ssid + ", you will need to remove the application \"PacketFence Agent\".\n");
-        sb.append("\nNEVER use the 'Forget' or 'Disconnect' button on the \"" + MainActivity.this.ssid + "\" SSID.\n" +
+        sb.append("\nTo forget " + currentSSid + ", you will need to remove the application \"PacketFence Agent\".\n");
+        sb.append("\nNEVER use the 'Forget' or 'Disconnect' button on the \"" + currentSSid + "\" SSID.\n" +
                 "If you do, you will not be able to use it for the next 24 hours.\n");
-        sb.append("\nChanging " + MainActivity.this.ssid + " settings:\n" +
+        sb.append("\nChanging " + currentSSid + " settings:\n" +
                 "Unfortunately, this will not be possible. It is managed by the application PacketFence Agent.\n" +
                 "This is the new android way to set WiFi access. It prevents applications to change your network settings without your consent.\n");
 
