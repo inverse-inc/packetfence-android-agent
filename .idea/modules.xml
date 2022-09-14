@@ -3,6 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/packetfence-android-agent.iml" filepath="$PROJECT_DIR$/packetfence-android-agent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/packetfence-android-agent.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/packetfence-android-agent.main.iml" filepath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/packetfence-android-agent.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.unitTest.iml" />
     </modules>
   </component>
 </project>

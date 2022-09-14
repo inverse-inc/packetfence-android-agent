@@ -9,7 +9,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="AutoImportSettings">
-    <option name="autoReloadType" value="SELECTIVE" />
+    <option name="autoReloadType" value="NONE" />
   </component>
   <component name="BranchesTreeState">
     <expand>
@@ -41,59 +41,58 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="989caea0-4dd5-41d8-885f-32d7851267d8" name="Default" comment="update app">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_1_1_0_jar.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/gradle.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/classAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/classAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/jarAnalysis.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/jarAnalysis.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/checksums/checksums.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/executionHistory/executionHistory.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.3.3/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/checksums.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/md5-checksums.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/checksums/sha1-checksums.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/dependencies-accessors.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/dependencies-accessors/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileChanges/last-build.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/7.5.1/gc.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.androidTest.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.main.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules/packetfence-android-agent.unitTest.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/executionHistory/executionHistory.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileChanges/last-build.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileChanges/last-build.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileContent/fileContent.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/fileHashes.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.5.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/gc.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/dependencies-accessors/gc.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/classAnalysis.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/jarAnalysis.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/javaCompile.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/6.1.1/javaCompile/taskHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.3.3/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/checksums/sha1-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/build_file_checksums.ser" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/jarRepositories.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_1_1_0_jar.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Gradle__androidx_annotation_annotation_1_1_0.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AndroidManifest.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/packetfence-android-agent.iml" beforeDir="false" afterPath="$PROJECT_DIR$/packetfence-android-agent.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/project.properties" beforeDir="false" afterPath="$PROJECT_DIR$/project.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/drawable-hdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/drawable-hdpi/pf_bg.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/drawable-mdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/drawable-xhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/drawable-xxhdpi/ic_launcher.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/layout/activity_main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/menu/main.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/values-sw600dp/dimens.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/values-sw720dp-land/dimens.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/values/dimens.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/values/strings.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/res/values/styles.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/CustomSSLSocketFactory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/MainActivity.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/DiscoveryStringRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/DiscoveryStringRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/packetfence/agent/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/res/menu/main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/menu/main.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="Pixel_2_API_25" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[ae1d325f]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -124,6 +123,9 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1gJvWWPRlxmAqeLCJ1TbW2GGQIB" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -140,12 +142,17 @@
     <property name="ExportApk.SignV2" value="true" />
     <property name="ResourceManagerPrefKey.ResourceType" value="ANIM" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="android.sdk.path" value="$USER_HOME$/Android/Sdk" />
+    <property name="cidr.known.project.marker" value="true" />
     <property name="device.picker.selection" value="00c6410d3748caf8" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../git/packetfence-android-agent" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="memory.settings.postsync.last.time.stamp" value="1598356199872" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.project.gradle" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.17" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="com.intellij.jarRepository.settings.RemoteRepositoriesConfigurable" />
     <property name="sync.plugin.last.upgrade.timestamp" value="1586780879512" />
   </component>
   <component name="RunManager">
@@ -157,29 +164,58 @@
       </method>
     </configuration>
     <configuration name="packetfence-android-agent" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
-      <module name="packetfence-android-agent" />
+      <module name="packetfence-android-agent.main" />
       <option name="DEPLOY" value="true" />
       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
       <option name="DEPLOY_AS_INSTANT" value="false" />
       <option name="ARTIFACT_NAME" value="" />
       <option name="PM_INSTALL_OPTIONS" value="" />
+      <option name="ALL_USERS" value="false" />
+      <option name="ALWAYS_INSTALL_WITH_PM" value="false" />
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
-      <option name="SKIP_NOOP_APK_INSTALLATIONS" value="true" />
-      <option name="FORCE_STOP_RUNNING_APP" value="true" />
-      <option name="TARGET_SELECTION_MODE" value="SHOW_DIALOG" />
-      <option name="DEBUGGER_TYPE" value="Java" />
+      <option name="INSPECTION_WITHOUT_ACTIVITY_RESTART" value="false" />
+      <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+      <option name="SELECTED_CLOUD_MATRIX_CONFIGURATION_ID" value="-1" />
+      <option name="SELECTED_CLOUD_MATRIX_PROJECT_ID" value="" />
+      <option name="DEBUGGER_TYPE" value="Auto" />
+      <Auto>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Auto>
+      <Hybrid>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Hybrid>
       <Java />
+      <Native>
+        <option name="USE_JAVA_AWARE_DEBUGGER" value="false" />
+        <option name="SHOW_STATIC_VARS" value="true" />
+        <option name="WORKING_DIR" value="" />
+        <option name="TARGET_LOGGING_CHANNELS" value="lldb process:gdb-remote packets" />
+        <option name="SHOW_OPTIMIZED_WARNING" value="true" />
+      </Native>
       <Profilers>
         <option name="ADVANCED_PROFILING_ENABLED" value="false" />
+        <option name="STARTUP_PROFILING_ENABLED" value="false" />
         <option name="STARTUP_CPU_PROFILING_ENABLED" value="false" />
-        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Sampled (Java)" />
+        <option name="STARTUP_CPU_PROFILING_CONFIGURATION_NAME" value="Java/Kotlin Method Sample (legacy)" />
+        <option name="STARTUP_NATIVE_MEMORY_PROFILING_ENABLED" value="false" />
+        <option name="NATIVE_MEMORY_SAMPLE_RATE_BYTES" value="2048" />
       </Profilers>
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY_CLASS" value="" />
+      <option name="SEARCH_ACTIVITY_IN_GLOBAL_SCOPE" value="false" />
+      <option name="SKIP_ACTIVITY_VALIDATION" value="false" />
       <method v="2">
         <option name="Android.Gradle.BeforeRunTask" enabled="true" />
       </method>
@@ -237,92 +273,5 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="update app" />
     <option name="LAST_COMMIT_MESSAGE" value="update app" />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="786" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1599834948204">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="786" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1599834948204" />
-    <state x="100" y="127" width="1720" height="853" key="AVDManager" timestamp="1599844306028">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="100" y="127" width="1720" height="853" key="AVDManager/0.27.1920.1053@0.27.1920.1053" timestamp="1599844306028" />
-    <state x="818" y="317" width="274" height="479" key="AndroidProcessChooserDialog" timestamp="1599589729473">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="818" y="317" width="274" height="479" key="AndroidProcessChooserDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1599589729473" />
-    <state x="1004" y="308" width="424" height="491" key="FileChooserDialogImpl" timestamp="1600093853690">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="1004" y="308" width="424" height="491" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1600093853690" />
-    <state width="1874" height="340" key="GridCell.Tab.0.bottom" timestamp="1600098447432">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.0.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447432" />
-    <state width="1807" height="278" key="GridCell.Tab.0.bottom/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
-    <state width="1802" height="284" key="GridCell.Tab.0.bottom/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197911" />
-    <state width="1874" height="340" key="GridCell.Tab.0.center" timestamp="1600098447431">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.0.center/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447431" />
-    <state width="1807" height="278" key="GridCell.Tab.0.center/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
-    <state width="1802" height="284" key="GridCell.Tab.0.center/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197910" />
-    <state width="1874" height="340" key="GridCell.Tab.0.left" timestamp="1600098447431">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.0.left/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447431" />
-    <state width="1807" height="278" key="GridCell.Tab.0.left/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
-    <state width="1802" height="284" key="GridCell.Tab.0.left/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197910" />
-    <state width="1874" height="340" key="GridCell.Tab.0.right" timestamp="1600098447432">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.0.right/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447432" />
-    <state width="1807" height="278" key="GridCell.Tab.0.right/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356246948" />
-    <state width="1802" height="284" key="GridCell.Tab.0.right/362.1080.1920.1080/434.0.2126.1080@362.1080.1920.1080" timestamp="1597776197911" />
-    <state width="1874" height="340" key="GridCell.Tab.1.bottom" timestamp="1600098447432">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.1.bottom/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447432" />
-    <state width="1874" height="340" key="GridCell.Tab.1.center" timestamp="1600098447432">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.1.center/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447432" />
-    <state width="1874" height="340" key="GridCell.Tab.1.left" timestamp="1600098447432">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.1.left/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447432" />
-    <state width="1874" height="340" key="GridCell.Tab.1.right" timestamp="1600098447432">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state width="1874" height="340" key="GridCell.Tab.1.right/0.27.1920.1053@0.27.1920.1053" timestamp="1600098447432" />
-    <state x="482" y="210" width="1022" height="737" key="SettingsEditor" timestamp="1599592089263">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="482" y="210" width="1022" height="737" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1599592089263" />
-    <state x="746" y="1628" key="SettingsEditor/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1597845705428" />
-    <state x="913" y="1821" key="com.intellij.ide.util.TipDialog" timestamp="1598356198441">
-      <screen x="264" y="1440" width="1920" height="1080" />
-    </state>
-    <state x="913" y="1821" key="com.intellij.ide.util.TipDialog/264.1440.1920.1080/331.0.2229.1440@264.1440.1920.1080" timestamp="1598356198441" />
-    <state x="874" y="163" width="683" height="780" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1599595087105">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="874" y="163" width="683" height="780" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1599595087105" />
-    <state x="1006" y="464" width="430" height="179" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1600097339767">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="1006" y="464" width="430" height="179" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.27.1920.1053@0.27.1920.1053" timestamp="1600097339767" />
-    <state x="878" y="255" width="890" height="665" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1599846348529">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="878" y="255" width="890" height="665" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.27.1920.1053@0.27.1920.1053" timestamp="1599846348529" />
-    <state x="542" y="141" width="1347" height="825" key="new project wizard" timestamp="1599827654429">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="542" y="141" width="1347" height="825" key="new project wizard/0.27.1920.1053@0.27.1920.1053" timestamp="1599827654429" />
-    <state x="885" y="192" width="672" height="676" key="search.everywhere.popup" timestamp="1599750636577">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="885" y="192" width="672" height="676" key="search.everywhere.popup/0.27.1920.1053@0.27.1920.1053" timestamp="1599750636577" />
   </component>
 </project>
