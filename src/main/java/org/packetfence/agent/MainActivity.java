@@ -5,8 +5,13 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.*;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiEnterpriseConfig;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiNetworkSuggestion;
 import android.os.Build;
@@ -16,6 +21,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.security.KeyChain;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.*;
 import android.widget.*;
@@ -42,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
@@ -135,6 +142,11 @@ public class MainActivity extends Activity {
     }
 
     public void showDebugOrExit(){
+        Map<String, String> connectionInfo = getCurrentConnectionInfo(MainActivity.this);
+        for (Map.Entry<String, String> entry : connectionInfo.entrySet()) {
+            showInBoxIfDebug(entry.getKey()+" => "+entry.getValue());
+        }
+
         if (isDebugMode || isDebugSteps) {
             TextView showText = new TextView(this);
             String st = debugConfigOutput;
@@ -191,7 +203,7 @@ public class MainActivity extends Activity {
     }
 
     public void showInBox(String text) {
-        debugOutputSteps = debugOutputSteps+"\n"+text;
+        MainActivity.this.debugOutputSteps = MainActivity.this.debugOutputSteps+"\n"+text;
         final Activity view = this;
         Toast.makeText(view, text, Toast.LENGTH_LONG)
                 .show();
@@ -224,14 +236,14 @@ public class MainActivity extends Activity {
             showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID");
         }
         // Added in API 30
-        /**
-         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED){
-         showInBox("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED");
+        if (MainActivity.this.api_version >= 30) {
+            if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED){
+                showInBox("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED");
+            }
+            if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_INVALID){
+                showInBox("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_INVALID");
+            }
          }
-         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_INVALID){
-         showInBox("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_INVALID");
-         }
-         **/
     }
 
     /*
@@ -336,7 +348,6 @@ public class MainActivity extends Activity {
         //Reset Values
         debugOutputSteps = "\n\n####\nSteps\n####\n";
         debugConfigOutput = "API version: "+Build.VERSION.SDK_INT;
-
         if (MainActivity.this.api_version >= 29) {
             showDialogAfterAPI29();
         } else {
@@ -350,6 +361,12 @@ public class MainActivity extends Activity {
      * TEST SECURE CONNEXION TO EXTRACT XML
      */
     public void fetchPortalDomainName() {
+        WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        if (!wifiManager.isWifiEnabled()) {
+            showInBox("Please enable wifi first");
+            showDebugOrExit();
+        }
+
         if (MainActivity.this.overrideProfileUrl != null) {
             fetchXML();
             return;
@@ -741,8 +758,6 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2TLSAfterAPI29() {
-        preparePostSuggestion();
-
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setPassword("test");
@@ -946,12 +961,17 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        showInBoxIfDebug("Activity Results");
         if (requestCode == MainActivity.this.FLOW_CA) {
+            showInBoxIfDebug("FLOW_CA");
             configureWPA2TLSBeforeAPI29();
         } else if (requestCode == MainActivity.this.FLOW_BIB) {
+            showInBoxIfDebug("FLOW_BIB");
+            showDebugOrExit();
+        } else {
+            showInBoxIfDebug("Request code is: "+requestCode);
             showDebugOrExit();
         }
-
     }
 
     /* WPA2PEAP */
@@ -980,11 +1000,6 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2PEAPAfterAPI29() {
-        // https://stackoverflow.com/a/61261805
-        // https://stackoverflow.com/a/60773386
-        // https://www.it-swarm.dev/fr/android/est-il-possible-dajouter-une-configuration-reseau-sur-android-q/811143688/
-        preparePostSuggestion();
-
         InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
         BufferedInputStream bis = new BufferedInputStream(is);
 
@@ -1132,6 +1147,7 @@ public class MainActivity extends Activity {
     }
 
     public void clearConfigurationAfterAPI29() {
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
                 .setIsAppInteractionRequired(false)
@@ -1139,7 +1155,6 @@ public class MainActivity extends Activity {
 
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
-        final WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final int status = wifiManager.removeNetworkSuggestions(suggestionsList);
         if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
             if (MainActivity.this.isDebugMode) showNetworkError(status);
@@ -1148,9 +1163,7 @@ public class MainActivity extends Activity {
 
     public void clearConfigurationBeforeAPI29() {
         List<WifiConfiguration> currentConfigurations;
-        WifiManager manager;
-
-        manager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
+        WifiManager manager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
         currentConfigurations = manager.getConfiguredNetworks();
 
         for (WifiConfiguration currentConfiguration : currentConfigurations) {
@@ -1163,8 +1176,8 @@ public class MainActivity extends Activity {
     }
 
     /* ENABLE CONFIGURATION */
+    @Deprecated
     public void preparePostSuggestion() {
-        IntentFilter intentFilter = new IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
 
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -1178,31 +1191,53 @@ public class MainActivity extends Activity {
                 showInBoxIfDebug("Connection Suggestion Succeeded");
             }
         };
+        IntentFilter intentFilter = new IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
         MainActivity.this.broadcastReceiver = broadcastReceiver;
         MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
+        // Note the follwing line is to close the receiver
+        MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
     }
 
     public void enableWifiConfiguration(List<WifiNetworkSuggestion> suggestionsList) {
         WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-
         int status = wifiManager.addNetworkSuggestions(suggestionsList);
-        if (status == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE) {
-            showInBoxIfDebug("Suggestion Update Needed");
-            status = wifiManager.removeNetworkSuggestions(suggestionsList);
-            showInBoxIfDebug("WifiNetworkSuggestion Removing Network suggestions status is " + status);
-            status = wifiManager.addNetworkSuggestions(suggestionsList);
-        }
         if (status == WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
             showInBoxIfDebug("Suggestion Added " + MainActivity.this.ssid);
+            // Note: On android 10 the startActivityResults is ending quitely on the divice:
             startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), MainActivity.this.FLOW_BIB);
-        }
-        if (status != WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
-            showInBoxIfDebug("Too bad !");
+        } else {
+            showInBoxIfDebug("The suggestion SSID "+ MainActivity.this.ssid +" failed !");
             showInBoxIfDebug("Status " + status);
             showNetworkError(status);
+            showDebugOrExit();
         }
-        MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
-        showDebugOrExit();
+    }
+
+    public static Map<String, String> getCurrentConnectionInfo(Context context) {
+        Map<String, String> connectionInfo = new HashMap<String, String>();
+
+        String ssid = null;
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (networkInfo.isConnected()) {
+            final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+            if (wifiInfo != null){
+                if(!TextUtils.isEmpty(wifiInfo.getSSID())) {
+                    // Note: It looks that you need to request the fine location to get access to this data
+                    connectionInfo.put("SSID", wifiInfo.getSSID());
+                }
+                if(wifiInfo.getIpAddress() != 0){
+                    int ip = wifiInfo.getIpAddress();
+                    connectionInfo.put("IP", String.format("%d.%d.%d.%d", (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff)));
+                }
+            }
+
+            SupplicantState supplicantState = wifiInfo.getSupplicantState();
+            //connectionInfo.put("4WAY_HANDSHAKE",String.valueOf(supplicantState.valueOf("4WAY_HANDSHAKE")));
+            connectionInfo.put("Connection completed?",String.valueOf(supplicantState.valueOf("COMPLETED")));
+        }
+        return connectionInfo;
     }
 
     public void enableWifiConfiguration(WifiConfiguration config) {
@@ -1222,6 +1257,7 @@ public class MainActivity extends Activity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            showInBox("Error Enable Conf:" + e.getMessage());
         }
         showDebugOrExit();
     }
