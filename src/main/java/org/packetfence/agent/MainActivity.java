@@ -372,11 +372,12 @@ public class MainActivity extends Activity {
             return;
         }
 
-        DiscoveryStringRequest stringRequest = new DiscoveryStringRequest(Request.Method.GET, MainActivity.this.discoveryUrl,
-                new Response.Listener<DiscoveryStringRequest.ResponseM>() {
+        org.packetfence.agent.DiscoveryStringRequest stringRequest =
+                new org.packetfence.agent.DiscoveryStringRequest(Request.Method.GET, MainActivity.this.discoveryUrl,
+                new Response.Listener<org.packetfence.agent.DiscoveryStringRequest.ResponseM>() {
 
                     @Override
-                    public void onResponse(DiscoveryStringRequest.ResponseM response) {
+                    public void onResponse(org.packetfence.agent.DiscoveryStringRequest.ResponseM response) {
                         showInBox("Profile domain name probe was successful");
                         String location = null;
                         if(response.headers.get("Location") != null) {
@@ -396,7 +397,7 @@ public class MainActivity extends Activity {
                             showDebugOrExit();
                         }
                     }
-                }, new Response.ErrorListener() {
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (error.networkResponse == null) {
