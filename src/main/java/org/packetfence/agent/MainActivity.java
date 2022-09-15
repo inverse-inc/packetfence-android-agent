@@ -140,17 +140,6 @@ public class MainActivity extends Activity {
         return true;
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == MainActivity.this.FLOW_CA) {
-            configureWPA2TLSBeforeAPI20();
-        } else if (requestCode == MainActivity.this.FLOW_BIB) {
-            showDebugOrExit();
-        }
-
-    }
-
     /*
      * QUIT
      */
@@ -381,7 +370,6 @@ public class MainActivity extends Activity {
     }
 
     // Alert Dialog for API 29 Part 1
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void alertDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         StringBuilder sb = new StringBuilder();
         sb.append("\nStep 1:\n");
@@ -420,8 +408,8 @@ public class MainActivity extends Activity {
         alert03.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void showDebugConfigOutput(final List<WifiNetworkSuggestion> suggestionsList){
+        showInBoxIfDebug("## showDebugConfigOutput");
         addTodebugConfigOutput("EAP TLS");
         addTodebugConfigOutput("userP12Name >>"+MainActivity.this.userP12Name);
         addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
@@ -465,7 +453,6 @@ public class MainActivity extends Activity {
         alert04.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void showDebugCert(final List<WifiNetworkSuggestion> suggestionsList){
         String st = "userPrivateKey >>" + MainActivity.this.userPrivateKey.toString();
         st += "\n\n\n\n";
@@ -495,7 +482,6 @@ public class MainActivity extends Activity {
         alert04.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void showDebugCA(final List<WifiNetworkSuggestion> suggestionsList){
         String st = "caCertificate >>"+MainActivity.this.caCertificate.toString();
 
@@ -526,7 +512,6 @@ public class MainActivity extends Activity {
     }
 
     // Alert Dialog for API 29 Part 2
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void howToDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         String currentSSid = MainActivity.this.ssid;
         StringBuilder sb = new StringBuilder();
@@ -772,6 +757,7 @@ public class MainActivity extends Activity {
      * Wireless Configurations WPA-PEAP And EAP-TLS
      */
     public void configureWirelessConnectionWPAPEAPAndEAPTLS(Object[] categoryObj, HashMap<?, ?> generalConfig) {
+        showInBoxIfDebug("## configureWirelessConnectionWPAPEAPAndEAPTLS");
         HashMap<?, ?> eapClientConfigurationHashMap = (HashMap<?, ?>) generalConfig
                 .get("EAPClientConfiguration");
 
@@ -784,7 +770,7 @@ public class MainActivity extends Activity {
                 showInBoxIfDebug("Detected WPA EAP-TLS configuration");
                 addTodebugConfigOutput("WPA EAP-TLS configuration");
                 setVariables(categoryObj, EAPTYPE_TLS);
-                if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version >= 29){
+                if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version > 31){
                     misconfiguration();
                 } else {
                     configureWirelessConnectionWPA2TLS();
@@ -796,7 +782,7 @@ public class MainActivity extends Activity {
                 MainActivity.this.tlsUsername = (String) eapClientConfigurationHashMap.get("UserName");
                 addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
                 setVariables(categoryObj, EAPTYPE_PEAP);
-                if (MainActivity.this.caCrt==null && MainActivity.this.api_version >= 29){
+                if (MainActivity.this.caCrt==null && MainActivity.this.api_version > 31){
                     misconfiguration();
                 } else {
                     configureWirelessConnectionWPA2PEAP();
@@ -813,6 +799,7 @@ public class MainActivity extends Activity {
 
     /* WPA2TLS */
     public void configureWirelessConnectionWPA2TLS() {
+        showInBoxIfDebug("## configureWirelessConnectionWPA2TLS");
         final EditText input = new EditText(MainActivity.this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -841,7 +828,6 @@ public class MainActivity extends Activity {
     }
 
     // Configure WPA2TLS After API 29
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void configureWPA2TLSAfterAPI29() {
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
@@ -881,8 +867,9 @@ public class MainActivity extends Activity {
     // Configure WPA2TLS Before API 20
     // (Also used with "Between API 20 and API 29"
     //       due to override on onActivityResult see override section)
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void configureWPA2TLSBeforeAPI20() {
+        showInBoxIfDebug("## configureWPA2TLSBeforeAPI20");
+
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
 
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
@@ -924,49 +911,12 @@ public class MainActivity extends Activity {
         enableWifiConfiguration(wc);
     }
 
-    public void configureWPA2TLSAPI20() {
-        if (setCaIssuer()){
-            String displayName = MainActivity.this.userP12Name;
-            Intent installIntent = KeyChain.createInstallIntent();
-            installIntent.putExtra(KeyChain.EXTRA_NAME, displayName);
-            installIntent.putExtra(KeyChain.EXTRA_CERTIFICATE, MainActivity.this.caCertificateEncoded);
-            startActivityForResult(installIntent, MainActivity.this.FLOW_CA);
-        } else {
-            showDebugOrExit();
-        }
-        /*
-        try {
-            InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
-            BufferedInputStream bis = new BufferedInputStream(is);
-            CertificateFactory cf = CertificateFactory.getInstance("X.509");
-            X509Certificate x509 = null;
-            while (bis.available() > 0) {
-                 x509 = (X509Certificate) cf.generateCertificate(bis);
-            }
-            bis.close();
-            is.close();
-            MainActivity.this.caIssuer = x509.getIssuerDN().getName();
-
-            String displayName = MainActivity.this.userP12Name;
-            Intent installIntent = KeyChain.createInstallIntent();
-            installIntent.putExtra(KeyChain.EXTRA_NAME, displayName);
-            installIntent.putExtra(KeyChain.EXTRA_CERTIFICATE, x509.getEncoded());
-            startActivityForResult(installIntent, MainActivity.this.FLOW_CA);
-        } catch (Exception e) {
-            showInBox("error while parsing certificate:" + e.getMessage());
-            showInBox("The certificate is not computed. The configuration will stop.");
-            showDebugOrExit();
-        }
-        */
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         showInBoxIfDebug("Activity Results");
         if (requestCode == MainActivity.this.FLOW_CA) {
             showInBoxIfDebug("FLOW_CA");
-            configureWPA2TLSBeforeAPI29();
+            configureWPA2TLSBeforeAPI20();
         } else if (requestCode == MainActivity.this.FLOW_BIB) {
             showInBoxIfDebug("FLOW_BIB");
             showDebugOrExit();
@@ -978,6 +928,8 @@ public class MainActivity extends Activity {
 
     /* WPA2PEAP */
     public void configureWirelessConnectionWPA2PEAP() {
+        showInBoxIfDebug("## configureWirelessConnectionWPA2PEAP");
+
         final EditText input = new EditText(MainActivity.this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -1001,8 +953,9 @@ public class MainActivity extends Activity {
         alert07.show();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void configureWPA2PEAPAfterAPI29() {
+        showInBoxIfDebug("## configureWPA2PEAPAfterAPI29");
+
         if (setCaCert()) {
             WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
             mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
@@ -1028,8 +981,9 @@ public class MainActivity extends Activity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void configureWPA2PEAPBeforeAPI29() {
+        showInBoxIfDebug("## configureWPA2PEAPBeforeAPI29");
+
         showInBoxIfDebug("Configuring " + MainActivity.this.ssid +
                 " with username " + MainActivity.this.tlsUsername +
                 " and password " + MainActivity.this.password);
@@ -1081,7 +1035,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void configureWPAPSKAfterAPI29() {
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
@@ -1117,6 +1070,8 @@ public class MainActivity extends Activity {
      */
     // Set Variables
     public void setVariables(Object[] categoryObj, int connectionType ) {
+        showInBoxIfDebug("## setVariables");
+
         // default for EAPTYPE_TLS
         String connectionPayloadText = "com.apple.security.root";
         if (connectionType == EAPTYPE_PEAP){
@@ -1167,6 +1122,8 @@ public class MainActivity extends Activity {
 
     // Compute and transform certificates
     public boolean setCaCert() {
+        showInBoxIfDebug("## setCaCert");
+
         try {
             InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
             BufferedInputStream bis = new BufferedInputStream(is);
@@ -1187,6 +1144,8 @@ public class MainActivity extends Activity {
     }
 
     public boolean setUserCertAndKey() {
+        showInBoxIfDebug("## setUserCertAndKey");
+
         try {
             KeyStore p12;
             p12 = KeyStore.getInstance("pkcs12");
@@ -1210,6 +1169,8 @@ public class MainActivity extends Activity {
     }
 
     public boolean setCaIssuer() {
+        showInBoxIfDebug("## setCaIssuer");
+
         if (setCaCert()) {
             MainActivity.this.caIssuer = MainActivity.this.caCertificate.getIssuerDN().getName();
             return true;
@@ -1222,6 +1183,8 @@ public class MainActivity extends Activity {
      */
     /* Clear CONFIGURATION */
     public void clearConfiguration() {
+        showInBoxIfDebug("## clearConfiguration");
+
         if (MainActivity.this.api_version >= 29) {
             clearConfigurationAfterAPI29();
         } else {
@@ -1232,7 +1195,6 @@ public class MainActivity extends Activity {
     // This should return an error on api29 and api30
     // The configuration is owned by the app.
     // when you start the configuration, the app should be empty
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void clearConfigurationAfterAPI29() {
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
@@ -1254,8 +1216,6 @@ public class MainActivity extends Activity {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void clearConfigurationBeforeAPI29() {
         WifiManager manager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
         List<WifiConfiguration> currentConfigurations = manager.getConfiguredNetworks();
@@ -1292,8 +1252,9 @@ public class MainActivity extends Activity {
         MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     public void enableWifiConfiguration(List<WifiNetworkSuggestion> suggestionsList) {
+        showInBoxIfDebug("## enableWifiConfiguration suggestionsList");
+
         WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int status = wifiManager.addNetworkSuggestions(suggestionsList);
         if (status == WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
@@ -1308,7 +1269,9 @@ public class MainActivity extends Activity {
         }
     }
 
-    public static Map<String, String> getCurrentConnectionInfo(Context context) {
+    private Map<String, String> getCurrentConnectionInfo(Context context) {
+        showInBoxIfDebug("## getCurrentConnectionInfo");
+
         Map<String, String> connectionInfo = new HashMap<String, String>();
 
         String ssid = null;
@@ -1336,6 +1299,8 @@ public class MainActivity extends Activity {
     }
 
     public void enableWifiConfiguration(WifiConfiguration config) {
+        showInBoxIfDebug("## enableWifiConfiguration WifiConfiguration");
+
         WifiManager wifi = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
 
         showInBoxIfDebug(config.toString());
@@ -1356,3 +1321,4 @@ public class MainActivity extends Activity {
         }
         showDebugOrExit();
     }
+}
