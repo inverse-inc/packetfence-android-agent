@@ -38,7 +38,7 @@ apply plugin: 'com.android.application'
  */
 
 android {
-    compileSdkVersion=30
+    compileSdkVersion=31
     /**
      * compileSdkVersion specifies the Android API level Gradle should use to
      * compile your app. This means your app can use the API features included in
@@ -71,7 +71,7 @@ android {
         minSdkVersion 18
 
         // Specifies the API level used to test the app.
-        targetSdkVersion 30
+        targetSdkVersion 31
 
         // Defines the version number of your app.
         versionCode 14
