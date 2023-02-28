@@ -45,8 +45,11 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -84,6 +87,7 @@ public class MainActivity extends Activity {
     private Context context;
     private PrivateKey userPrivateKey;
     private java.security.cert.X509Certificate userCertificate;
+    private java.security.cert.X509Certificate[] caCertificates;
     private java.security.cert.X509Certificate caCertificate;
     private BroadcastReceiver broadcastReceiver;
     private String debugOutputSteps = "";
@@ -682,7 +686,22 @@ public class MainActivity extends Activity {
 
         try {
             while (bis.available() > 0) {
-                MainActivity.this.caCertificate = (java.security.cert.X509Certificate) cf.generateCertificate(bis);
+                // If multiple certificates
+                List<java.security.cert.X509Certificate> caCertificatesTmp = new ArrayList<java.security.cert.X509Certificate>();;
+                Collection certCol = cf.generateCertificates(bis);
+                addTodebugConfigOutput("certs size extraction is: "+Integer.toString(certCol.size()));
+                Iterator i = certCol.iterator();
+                while (i.hasNext()) {
+                    Certificate cert = (Certificate)i.next();
+                    if (MainActivity.this.caCertificate == null || MainActivity.this.caCertificate.toString().length() == 0) {
+                        MainActivity.this.caCertificate = (java.security.cert.X509Certificate) cert;
+                    }
+                    caCertificatesTmp.add((java.security.cert.X509Certificate) cert);
+                    addTodebugConfigOutput(((java.security.cert.X509Certificate) cert).getSerialNumber().toString());
+                }
+                MainActivity.this.caCertificates = caCertificatesTmp.toArray(new java.security.cert.X509Certificate[0]);
+                addTodebugConfigOutput("caCertificates size is: "+Integer.toString(MainActivity.this.caCertificates.length));
+                addTodebugConfigOutput(MainActivity.this.caCertificates.toString());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -762,7 +781,11 @@ public class MainActivity extends Activity {
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setPassword("test");
-        mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
+        if (MainActivity.this.caCertificates.length>1){
+            mEnterpriseConfig.setCaCertificates(MainActivity.this.caCertificates);
+        } else {
+            mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
+        }
         mEnterpriseConfig.setClientKeyEntry(MainActivity.this.userPrivateKey,
                 MainActivity.this.userCertificate);
 
