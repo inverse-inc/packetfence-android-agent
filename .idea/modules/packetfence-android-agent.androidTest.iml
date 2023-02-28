@@ -28,7 +28,11 @@
     <content url="file://$MODULE_DIR$/../../build/generated/source/buildConfig/androidTest/debug" />
     <content url="file://$MODULE_DIR$/../../src/androidTest" />
     <content url="file://$MODULE_DIR$/../../src/androidTestDebug" />
+<<<<<<< HEAD
     <orderEntry type="jdk" jdkName="Android API 30 Platform" jdkType="Android SDK" />
+=======
+    <orderEntry type="jdk" jdkName="Android API 29 Platform" jdkType="Android SDK" />
+>>>>>>> 6b54d4b (IDE android studio updates)
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="packetfence-android-agent.main" scope="TEST" />
     <orderEntry type="module-library" scope="TEST">
