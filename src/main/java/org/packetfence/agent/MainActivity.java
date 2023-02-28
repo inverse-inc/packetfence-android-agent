@@ -202,6 +202,12 @@ public class MainActivity extends Activity {
     public void showInBoxIfDebug(String text) {
         if (isDebugMode) {
             showInBox(text);
+            showInConsole(text);
+        }
+    }
+
+    public void showInConsole(String text) {
+        if (isDebugMode) {
             System.out.println(text);
         }
     }
@@ -365,6 +371,7 @@ public class MainActivity extends Activity {
      * TEST SECURE CONNEXION TO EXTRACT XML
      */
     public void fetchPortalDomainName() {
+        addTodebugConfigOutput("=== fetchPortalDomainName ===");
         WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         if (!wifiManager.isWifiEnabled()) {
             showInBox("Please enable wifi first");
@@ -420,6 +427,7 @@ public class MainActivity extends Activity {
      * XML PART
      */
     public void fetchXML() {
+        addTodebugConfigOutput("=== fetchXML ===");
         String profileUrl;
         if (MainActivity.this.overrideProfileUrl != null) {
             profileUrl = MainActivity.this.overrideProfileUrl;
@@ -452,6 +460,7 @@ public class MainActivity extends Activity {
     }
 
     public void fetchXMLCallback(String content) {
+        addTodebugConfigOutput("=== fetchXMLCallback ===");
         if (content != null) {
             Object[] categoryObj = parseXML(content);
             configureFromXML(categoryObj);
@@ -462,6 +471,7 @@ public class MainActivity extends Activity {
     }
 
     public Object[] parseXML(String xml) {
+        addTodebugConfigOutput("=== parseXML ===");
         //public void parseXML(String xml) {
         Object[] categoryObj = new Object[0];
         try {
@@ -482,6 +492,7 @@ public class MainActivity extends Activity {
      * WIRELESS CONFIGURATION
      */
     public void configureFromXML(Object[] categoryObj) {
+        addTodebugConfigOutput("=== configureFromXML ===");
         // First one contains the general configuration
         HashMap<?, ?> generalConfig = (HashMap<?, ?>) categoryObj[0];
         MainActivity.this.ssid = (String) generalConfig.get("SSID_STR");
@@ -511,6 +522,7 @@ public class MainActivity extends Activity {
      * Wireless Configurations WEP
      */
     public void configureWirelessConnectionWEP() {
+        addTodebugConfigOutput("=== configureWirelessConnectionWEP ===");
         // Check the api version
         if (MainActivity.this.api_version >= 29) {
             configureWEPAfterAPI29();
@@ -521,11 +533,13 @@ public class MainActivity extends Activity {
 
     // TODO: Change it for api 29 currently equal to before 29
     public void configureWEPAfterAPI29() {
+        addTodebugConfigOutput("=== configureWEPAfterAPI29 ===");
         showInBox("It is no more supported by the Android API");
         showDebugOrExit();
     }
 
     public void configureWEPBeforeAPI29() {
+        addTodebugConfigOutput("=== configureWEPBeforeAPI29 ===");
         WifiConfiguration wc = new WifiConfiguration();
 
         wc.SSID = "\"" + MainActivity.this.ssid + "\"";
@@ -556,6 +570,7 @@ public class MainActivity extends Activity {
      * Wireless Configurations WPA-PEAP And EAP-TLS
      */
     public void configureWirelessConnectionWPAPEAPAndEAPTLS(Object[] categoryObj, HashMap<?, ?> generalConfig) {
+        addTodebugConfigOutput("=== configureWirelessConnectionWPAPEAPAndEAPTLS ===");
         HashMap<?, ?> eapClientConfigurationHashMap = (HashMap<?, ?>) generalConfig
                 .get("EAPClientConfiguration");
 
@@ -652,6 +667,7 @@ public class MainActivity extends Activity {
 
     /* WPA2TLS */
     public void configureWirelessConnectionWPA2TLS() {
+        addTodebugConfigOutput("=== configureWirelessConnectionWPA2TLS ===");
         final EditText input = new EditText(MainActivity.this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -671,6 +687,7 @@ public class MainActivity extends Activity {
 
     // Compute and transform certificates
     public void computeCaCert() {
+        addTodebugConfigOutput("=== computeCaCert ===");
         boolean certIsComputed = true;
         InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
         BufferedInputStream bis = new BufferedInputStream(is);
@@ -686,10 +703,10 @@ public class MainActivity extends Activity {
 
         try {
             while (bis.available() > 0) {
-                // If multiple certificates
+                // Since multiple CA certificates
                 List<java.security.cert.X509Certificate> caCertificatesTmp = new ArrayList<java.security.cert.X509Certificate>();;
                 Collection certCol = cf.generateCertificates(bis);
-                addTodebugConfigOutput("certs size extraction is: "+Integer.toString(certCol.size()));
+                addTodebugConfigOutput("=> certs size extraction is: "+Integer.toString(certCol.size()));
                 Iterator i = certCol.iterator();
                 while (i.hasNext()) {
                     Certificate cert = (Certificate)i.next();
@@ -700,8 +717,8 @@ public class MainActivity extends Activity {
                     addTodebugConfigOutput(((java.security.cert.X509Certificate) cert).getSerialNumber().toString());
                 }
                 MainActivity.this.caCertificates = caCertificatesTmp.toArray(new java.security.cert.X509Certificate[0]);
-                addTodebugConfigOutput("caCertificates size is: "+Integer.toString(MainActivity.this.caCertificates.length));
-                addTodebugConfigOutput(MainActivity.this.caCertificates.toString());
+                addTodebugConfigOutput("=> caCertificates size is: "+Integer.toString(MainActivity.this.caCertificates.length));
+                showInConsole("caCertificates.toString() starts =>\n"+MainActivity.this.caCertificates.toString()+"\n <= caCertificates.toString() ends");
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -731,6 +748,7 @@ public class MainActivity extends Activity {
     }
 
     public void computeUserCertAndKey() {
+        addTodebugConfigOutput("=== computeUserCertAndKey ===");
         KeyStore p12;
         boolean certIsGood = false;
         try {
@@ -778,6 +796,7 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2TLSAfterAPI29() {
+        addTodebugConfigOutput("=== configureWPA2TLSAfterAPI29 ===");
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setPassword("test");
@@ -807,6 +826,7 @@ public class MainActivity extends Activity {
 
     // Alert Dialog for server misconfiguration
     public void misconfiguration() {
+        addTodebugConfigOutput("=== misconfiguration ===");
         StringBuilder sb = new StringBuilder();
         sb.append("Your android version is not compatible with the current server settings\n");
         sb.append("\n");
@@ -926,6 +946,7 @@ public class MainActivity extends Activity {
 
     // Configure WPA2TLS Before API 29
     public void configureWPA2TLSBeforeAPI29() {
+        addTodebugConfigOutput("=== configureWPA2TLSBeforeAPI29 ===");
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
 
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
@@ -968,6 +989,7 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2TLSAPI20() {
+        addTodebugConfigOutput("=== configureWPA2TLSAPI20 ===");
         String displayName = MainActivity.this.userP12Name;
         byte[] certificate = MainActivity.this.caCrt;
 
@@ -985,6 +1007,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        addTodebugConfigOutput("=== onActivityResult ===");
         showInBoxIfDebug("Activity Results");
         if (requestCode == MainActivity.this.FLOW_CA) {
             showInBoxIfDebug("FLOW_CA");
@@ -1000,6 +1023,7 @@ public class MainActivity extends Activity {
 
     /* WPA2PEAP */
     public void configureWirelessConnectionWPA2PEAP() {
+        addTodebugConfigOutput("=== configureWirelessConnectionWPA2PEAP ===");
         final EditText input = new EditText(MainActivity.this);
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -1024,6 +1048,7 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2PEAPAfterAPI29() {
+        addTodebugConfigOutput("=== configureWPA2PEAPAfterAPI29 ===");
         InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
         BufferedInputStream bis = new BufferedInputStream(is);
 
@@ -1078,6 +1103,7 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPA2PEAPBeforeAPI29() {
+        addTodebugConfigOutput("=== configureWPA2PEAPBeforeAPI29 ===");
         showInBoxIfDebug("Configuring " + MainActivity.this.ssid +
                 " with username " + MainActivity.this.tlsUsername +
                 " and password " + MainActivity.this.password);
@@ -1122,6 +1148,7 @@ public class MainActivity extends Activity {
 
     /* WPAPSK */
     public void configureWirelessConnectionWPAPSK() {
+        addTodebugConfigOutput("=== configureWirelessConnectionWPAPSK ===");
         if (MainActivity.this.api_version >= 29) {
             configureWPAPSKAfterAPI29();
         } else {
@@ -1130,6 +1157,7 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPAPSKAfterAPI29() {
+        addTodebugConfigOutput("=== configureWPAPSKAfterAPI29 ===");
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
                 .setIsAppInteractionRequired(false)
@@ -1144,6 +1172,7 @@ public class MainActivity extends Activity {
     }
 
     public void configureWPAPSKBeforeAPI29() {
+        addTodebugConfigOutput("=== configureWPAPSKBeforeAPI29 ===");
         WifiConfiguration wc = new WifiConfiguration();
 
         wc.SSID = "\"" + MainActivity.this.ssid + "\"";
@@ -1163,6 +1192,7 @@ public class MainActivity extends Activity {
      */
     /* Clear CONFIGURATION */
     public void clearConfiguration() {
+        addTodebugConfigOutput("=== clearConfiguration ===");
         if (MainActivity.this.api_version >= 29) {
             clearConfigurationAfterAPI29();
         } else {
@@ -1171,6 +1201,7 @@ public class MainActivity extends Activity {
     }
 
     public void clearConfigurationAfterAPI29() {
+        addTodebugConfigOutput("=== clearConfigurationAfterAPI29 ===");
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
@@ -1186,6 +1217,7 @@ public class MainActivity extends Activity {
     }
 
     public void clearConfigurationBeforeAPI29() {
+        addTodebugConfigOutput("=== clearConfigurationBeforeAPI29 ===");
         List<WifiConfiguration> currentConfigurations;
         WifiManager manager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
         currentConfigurations = manager.getConfiguredNetworks();
@@ -1202,7 +1234,7 @@ public class MainActivity extends Activity {
     /* ENABLE CONFIGURATION */
     @Deprecated
     public void preparePostSuggestion() {
-
+        addTodebugConfigOutput("=== preparePostSuggestion ===");
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -1223,6 +1255,7 @@ public class MainActivity extends Activity {
     }
 
     public void enableWifiConfiguration(List<WifiNetworkSuggestion> suggestionsList) {
+        addTodebugConfigOutput("=== enableWifiConfiguration ===");
         WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int status = wifiManager.addNetworkSuggestions(suggestionsList);
         if (status == WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
@@ -1265,6 +1298,7 @@ public class MainActivity extends Activity {
     }
 
     public void enableWifiConfiguration(WifiConfiguration config) {
+        addTodebugConfigOutput("=== enableWifiConfiguration ===");
         WifiManager wifi = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
 
         showInBoxIfDebug(config.toString());
