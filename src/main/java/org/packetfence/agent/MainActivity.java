@@ -1090,13 +1090,24 @@ public class MainActivity extends Activity {
         mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
         mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
 
-        final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
+        WifiNetworkSuggestion suggestionTmp= new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
                 .setWpa2EnterpriseConfig(mEnterpriseConfig)
                 .setIsAppInteractionRequired(false)
                 .setPriority(100)
                 .build();
 
+        if (MainActivity.this.api_version >= 31) {
+            suggestionTmp = new WifiNetworkSuggestion.Builder()
+                    .setSsid(MainActivity.this.ssid)
+                    .setWpa2EnterpriseConfig(mEnterpriseConfig)
+                    .setIsAppInteractionRequired(false)
+                    .setPriority(100)
+                    .setMacRandomizationSetting(WifiNetworkSuggestion.RANDOMIZATION_PERSISTENT)
+                    .build();
+        }
+
+        final WifiNetworkSuggestion suggestion = suggestionTmp;
         final List<WifiNetworkSuggestion> suggestionsList = new ArrayList<WifiNetworkSuggestion>();
         suggestionsList.add(suggestion);
         alertDialogAfterAPI29(suggestionsList);
