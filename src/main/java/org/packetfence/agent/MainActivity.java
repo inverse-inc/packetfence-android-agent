@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.*;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiConfiguration;
@@ -45,7 +44,6 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -78,16 +76,16 @@ public class MainActivity extends Activity {
     private String userP12Name;
     private byte[] userP12;
     private String password = "";
-    private String caIssuer;
-    private String caCrtName;
+    private String caCrtString;
     private String serverCN = "";
-    private byte[] caCrt;
     private String ssid;
     private String tlsUsername;
     private Context context;
     private PrivateKey userPrivateKey;
     private java.security.cert.X509Certificate userCertificate;
+    private java.security.cert.Certificate[] userCertificates;
     private java.security.cert.X509Certificate[] caCertificates;
+    private List<java.security.cert.X509Certificate> caCertificatesTmp;
     private java.security.cert.X509Certificate caCertificate;
     private BroadcastReceiver broadcastReceiver;
     private String debugOutputSteps = "";
@@ -142,13 +140,14 @@ public class MainActivity extends Activity {
      * QUIT
      */
     public void addTodebugConfigOutput(String text){
+        showInBoxIfDebug(text);
         debugConfigOutput = debugConfigOutput + "\n" + text;
     }
 
     public void showDebugOrExit(){
         Map<String, String> connectionInfo = getCurrentConnectionInfo(MainActivity.this);
         for (Map.Entry<String, String> entry : connectionInfo.entrySet()) {
-            showInBoxIfDebug(entry.getKey()+" => "+entry.getValue());
+            addTodebugConfigOutput(entry.getKey()+" => "+entry.getValue());
         }
 
         if (isDebugMode || isDebugSteps) {
@@ -226,32 +225,32 @@ public class MainActivity extends Activity {
 
     public void showNetworkError(int iman) {
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_INTERNAL) {
-            showInBox("The packetfence agent suggestions had an internal error.");
-            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_INTERNAL");
+            addTodebugConfigOutput("The packetfence agent suggestions had an internal error.");
+            addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_INTERNAL");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_APP_DISALLOWED) {
-            showInBox("The packetfence agent suggestions are disallowed.");
-            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_APP_DISALLOWED");
+            addTodebugConfigOutput("The packetfence agent suggestions are disallowed.");
+            addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_APP_DISALLOWED");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE) {
-            showInBox("The packetfence agent has suggested a duplicate network.");
-            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE");
+            addTodebugConfigOutput("The packetfence agent has suggested a duplicate network.");
+            addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_DUPLICATE");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_EXCEEDS_MAX_PER_APP) {
-            showInBox("The packetfence agent exceeds the maximum of network suggestions per application.");
-            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_EXCEEDS_MAX_PER_APP");
+            addTodebugConfigOutput("The packetfence agent exceeds the maximum of network suggestions per application.");
+            addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_EXCEEDS_MAX_PER_APP");
         }
         if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID) {
-            showInBox("The " + this.ssid + " is not available in suggestions networks.");
-            showInBoxIfDebug("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID");
+            addTodebugConfigOutput("The " + this.ssid + " is not available in suggestions networks.");
+            addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID");
         }
         // Added in API 30
         if (MainActivity.this.api_version >= 30) {
             if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED){
-                showInBox("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED");
+                addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED");
             }
             if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_INVALID){
-                showInBox("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_INVALID");
+                addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_INVALID");
             }
          }
     }
@@ -389,7 +388,7 @@ public class MainActivity extends Activity {
 
                     @Override
                     public void onResponse(org.packetfence.agent.DiscoveryStringRequest.ResponseM response) {
-                        showInBox("Profile domain name probe was successful");
+                        addTodebugConfigOutput("Profile domain name probe was successful");
                         String location = null;
                         if(response.headers.get("Location") != null) {
                             location = response.headers.get("Location");
@@ -398,13 +397,13 @@ public class MainActivity extends Activity {
                             location = response.headers.get("location");
                         }
                         try {
-                            showInBoxIfDebug("Found location header value: " + location);
+                            addTodebugConfigOutput("Found location header value: " + location);
                             URL url = new URL(location);
                             MainActivity.this.profileDomainName = url.getHost();
-                            showInBoxIfDebug("Found domain name: " + MainActivity.this.profileDomainName);
+                            addTodebugConfigOutput("Found domain name: " + MainActivity.this.profileDomainName);
                             fetchXML();
                         } catch (MalformedURLException e) {
-                            showInBox("Unable to detect domain name from domain probe");
+                            addTodebugConfigOutput("Unable to detect domain name from domain probe");
                             showDebugOrExit();
                         }
                     }
@@ -412,9 +411,9 @@ public class MainActivity extends Activity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (error.networkResponse == null) {
-                    showInBox("Network error while finding profile domain name: " + error.getLocalizedMessage());
+                    addTodebugConfigOutput("Network error while finding profile domain name: " + error.getLocalizedMessage());
                 } else {
-                    showInBox("Error fetching profile");
+                    addTodebugConfigOutput("Error fetching profile");
                 }
                 showDebugOrExit();
             }
@@ -439,18 +438,18 @@ public class MainActivity extends Activity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        showInBox("Downloaded profile successfully");
+                        addTodebugConfigOutput("Downloaded profile successfully");
                         fetchXMLCallback(response);
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if (error.networkResponse == null) {
-                    showInBox("Network error: " + error.getLocalizedMessage());
+                    addTodebugConfigOutput("Network error: " + error.getLocalizedMessage());
                 } else if (error.networkResponse.statusCode == 404) {
-                    showInBox("Profile not found on server.");
+                    addTodebugConfigOutput("Profile not found on server.");
                 } else {
-                    showInBox("Error fetching profile ");
+                    addTodebugConfigOutput("Error fetching profile ");
                 }
                 showDebugOrExit();
             }
@@ -462,10 +461,11 @@ public class MainActivity extends Activity {
     public void fetchXMLCallback(String content) {
         addTodebugConfigOutput("=== fetchXMLCallback ===");
         if (content != null) {
+            addTodebugConfigOutput(content);
             Object[] categoryObj = parseXML(content);
             configureFromXML(categoryObj);
         } else {
-            showInBox("Unable to fetch configuration profile.");
+            addTodebugConfigOutput("Unable to fetch configuration profile.");
             showDebugOrExit();
         }
     }
@@ -483,7 +483,7 @@ public class MainActivity extends Activity {
 
             categoryObj = category.toArray();
         } catch (XmlParseException e) {
-            showInBox("Error PXML1:" + e.getMessage());
+            addTodebugConfigOutput("Error PXML1:" + e.getMessage());
         }
         return categoryObj;
     }
@@ -534,7 +534,7 @@ public class MainActivity extends Activity {
     // TODO: Change it for api 29 currently equal to before 29
     public void configureWEPAfterAPI29() {
         addTodebugConfigOutput("=== configureWEPAfterAPI29 ===");
-        showInBox("It is no more supported by the Android API");
+        addTodebugConfigOutput("It is no more supported by the Android API");
         showDebugOrExit();
     }
 
@@ -576,33 +576,32 @@ public class MainActivity extends Activity {
 
         // Handling WPA-PEAP and EAP-TLS
         if (eapClientConfigurationHashMap != null) {
-            showInBoxIfDebug("Detected WPA EAP configuration");
+            addTodebugConfigOutput("Detected WPA EAP configuration");
             ArrayList<?> eapTypes = (ArrayList<?>) eapClientConfigurationHashMap.get("AcceptEAPTypes");
+            MainActivity.this.caCertificatesTmp = new ArrayList<java.security.cert.X509Certificate>();
 
             if (eapTypes.contains(Integer.valueOf(EAPTYPE_TLS))) {
-                showInBoxIfDebug("Detected WPA EAP-TLS configuration");
-                addTodebugConfigOutput("WPA EAP-TLS configuration");
+                addTodebugConfigOutput("Detected WPA EAP-TLS configuration");
                 // We skip the first section
                 for (int i = 1; i < categoryObj.length; i++) {
                     HashMap<?, ?> config = (HashMap<?, ?>) categoryObj[i];
                     if (config.containsKey("PayloadType")) {
                         String payloadType = (String) (config.get("PayloadType"));
                         if (payloadType!=null && payloadType.equals("com.apple.security.root")) {
-                            showInBoxIfDebug("Found root certificate");
+                            addTodebugConfigOutput("Found root certificate");
 
-                            String caBytes = "-----BEGIN CERTIFICATE-----\n";
-                            caBytes += (String) config.get("PayloadContent");
-                            caBytes += "\n";
-                            caBytes += "-----END CERTIFICATE-----";
-
-                            MainActivity.this.caCrt = caBytes.getBytes();
-                            MainActivity.this.caCrtName = (String) config.get("PayloadIdentifier");
-                            MainActivity.this.caCrtName = MainActivity.this.caCrtName.replace('.', '-');
-                            addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
+                            MainActivity.this.caCrtString = "-----BEGIN CERTIFICATE-----\n";
+                            MainActivity.this.caCrtString += (String) config.get("PayloadContent");
+                            MainActivity.this.caCrtString += "\n";
+                            MainActivity.this.caCrtString += "-----END CERTIFICATE-----";
+                            java.security.cert.X509Certificate zayme = createX509CertFromString(MainActivity.this.caCrtString);
+                            MainActivity.this.caCertificate=zayme;
+                            MainActivity.this.caCertificatesTmp.add(zayme);
                         }
                         if (payloadType!=null && payloadType.equals("com.apple.security.pkcs12")) {
-                            showInBoxIfDebug("Found the EAP-TLS p12 certificate");
+                            addTodebugConfigOutput("Found the EAP-TLS p12 certificate");
                             String p12BytesB64 = (String) config.get("PayloadContent");
+
                             byte[] p12Bytes = Base64.decode(p12BytesB64.getBytes(), Base64.DEFAULT);
 
                             MainActivity.this.userP12 = p12Bytes;
@@ -612,21 +611,29 @@ public class MainActivity extends Activity {
                             addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
                         }
                         if (payloadType!=null && payloadType.equals("com.apple.security.pkcs1")) {
-                            showInBoxIfDebug("Found the EAP-TLS root certificate");
+                            addTodebugConfigOutput("Found the EAP-TLS root certificate");
                             MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
                             addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
                         }
+                        if (payloadType!=null && payloadType.equals("com.apple.security.other_ca")) {
+                            addTodebugConfigOutput("Found another radius CA certificates");
+                            String zayme_content_from_other_ca = (String) config.get("PayloadContent");
+                            java.security.cert.X509Certificate zayme = createX509CertFromString(zayme_content_from_other_ca);
+                            MainActivity.this.caCertificatesTmp.add(zayme);
+                        }
                     }
                 }
-                if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version >= 29){
+                if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version >= 34){
                     misconfiguration();
                 } else {
+                    if (!MainActivity.this.caCertificatesTmp.isEmpty()) {
+                        MainActivity.this.caCertificates = MainActivity.this.caCertificatesTmp.toArray(new java.security.cert.X509Certificate[0]);
+                    }
                     configureWirelessConnectionWPA2TLS();
                 }
 
             } else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
-                showInBoxIfDebug("Detected WPA EAP-PEAP configuration");
-                addTodebugConfigOutput("WPA EAP-PEAP configuration");
+                addTodebugConfigOutput("Detected WPA EAP-PEAP configuration");
                 MainActivity.this.tlsUsername = (String) eapClientConfigurationHashMap.get("UserName");
                 addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
                 for (int i = 1; i < categoryObj.length; i++) {
@@ -634,32 +641,41 @@ public class MainActivity extends Activity {
                     if (config.containsKey("PayloadType")) {
                         String payloadType = (String) (config.get("PayloadType"));
                         if (payloadType!=null && payloadType.equals("com.apple.security.radius.ca")) {
-                            showInBoxIfDebug("Found radius root certificate");
-                            String caBytes = "-----BEGIN CERTIFICATE-----\n";
-                            caBytes += (String) config.get("PayloadContent");
-                            caBytes += "\n";
-                            caBytes += "-----END CERTIFICATE-----";
-
-                            MainActivity.this.caCrt = caBytes.getBytes();
-                            addTodebugConfigOutput("this.caCrt >>"+MainActivity.this.caCrt.toString());
+                            addTodebugConfigOutput("Found radius root certificate");
+                            MainActivity.this.caCrtString = "-----BEGIN CERTIFICATE-----\n";
+                            MainActivity.this.caCrtString += (String) config.get("PayloadContent");
+                            MainActivity.this.caCrtString += "\n";
+                            MainActivity.this.caCrtString += "-----END CERTIFICATE-----";
+                            java.security.cert.X509Certificate zayme = createX509CertFromString(MainActivity.this.caCrtString);
+                            MainActivity.this.caCertificate=zayme;
+                            MainActivity.this.caCertificatesTmp.add(zayme);
                         }
                         if (payloadType!=null && payloadType.equals("com.apple.security.root")) {
-                            showInBoxIfDebug("Found the EAP-PEAP root certificate");
+                            addTodebugConfigOutput("Found the EAP-PEAP root certificate");
                             MainActivity.this.serverCN = (String) config.get("PayloadCertificateFileName");
                             addTodebugConfigOutput("serverCN >>"+MainActivity.this.serverCN);
                         }
+                        if (payloadType!=null && payloadType.equals("com.apple.security.other_ca")) {
+                            addTodebugConfigOutput("Found another radius CA certificates");
+                            String zayme_content_from_other_ca = (String) config.get("PayloadContent");
+                            java.security.cert.X509Certificate zayme = createX509CertFromString(zayme_content_from_other_ca);
+                            MainActivity.this.caCertificatesTmp.add(zayme);
+                        }
                     }
                 }
-                if (MainActivity.this.caCrt==null && MainActivity.this.api_version >= 29){
+                if (MainActivity.this.caCrtString.isEmpty() && MainActivity.this.api_version >= 34){
                     misconfiguration();
                 } else {
+                    if (MainActivity.this.caCertificatesTmp.size() > 1) {
+                        MainActivity.this.caCertificates = MainActivity.this.caCertificatesTmp.toArray(new java.security.cert.X509Certificate[0]);
+                    }
                     configureWirelessConnectionWPA2PEAP();
                 }
             }
         }
         // Handling WPA-PSK
         else {
-            showInBoxIfDebug("WPA WPA-PSK configuration");
+            addTodebugConfigOutput("WPA WPA-PSK configuration");
             MainActivity.this.password = (String) generalConfig.get("Password");
             configureWirelessConnectionWPAPSK();
         }
@@ -679,72 +695,10 @@ public class MainActivity extends Activity {
         alert02.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 MainActivity.this.password = input.getText().toString();
-                computeCaCert();
+                computeUserCertAndKey();
             }
         });
         alert02.show();
-    }
-
-    // Compute and transform certificates
-    public void computeCaCert() {
-        addTodebugConfigOutput("=== computeCaCert ===");
-        boolean certIsComputed = true;
-        InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
-        BufferedInputStream bis = new BufferedInputStream(is);
-
-        CertificateFactory cf = null;
-        try {
-            cf = CertificateFactory.getInstance("X.509");
-        } catch (java.security.cert.CertificateException e) {
-            e.printStackTrace();
-            showInBox("Error CC1:" + e.getMessage());
-            certIsComputed = false;
-        }
-
-        try {
-            while (bis.available() > 0) {
-                // Since multiple CA certificates
-                List<java.security.cert.X509Certificate> caCertificatesTmp = new ArrayList<java.security.cert.X509Certificate>();;
-                Collection certCol = cf.generateCertificates(bis);
-                addTodebugConfigOutput("=> certs size extraction is: "+Integer.toString(certCol.size()));
-                Iterator i = certCol.iterator();
-                while (i.hasNext()) {
-                    Certificate cert = (Certificate)i.next();
-                    if (MainActivity.this.caCertificate == null || MainActivity.this.caCertificate.toString().length() == 0) {
-                        MainActivity.this.caCertificate = (java.security.cert.X509Certificate) cert;
-                    }
-                    caCertificatesTmp.add((java.security.cert.X509Certificate) cert);
-                    addTodebugConfigOutput(((java.security.cert.X509Certificate) cert).getSerialNumber().toString());
-                }
-                MainActivity.this.caCertificates = caCertificatesTmp.toArray(new java.security.cert.X509Certificate[0]);
-                addTodebugConfigOutput("=> caCertificates size is: "+Integer.toString(MainActivity.this.caCertificates.length));
-                showInConsole("caCertificates.toString() starts =>\n"+MainActivity.this.caCertificates.toString()+"\n <= caCertificates.toString() ends");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            showInBox("Error CC2:" + e.getMessage());
-            certIsComputed = false;
-        } catch (java.security.cert.CertificateException e) {
-            e.printStackTrace();
-            showInBox("Error CC3:" + e.getMessage());
-            certIsComputed = false;
-        }
-
-        try {
-            bis.close();
-            is.close();
-        } catch (IOException e) {
-            // If this fails, it isn't the end of the world.
-            e.printStackTrace();
-            showInBox("Error CC4:" + e.getMessage());
-        }
-
-        if (certIsComputed) {
-            computeUserCertAndKey();
-        } else {
-            showInBox("The certificate is not computed. The configuration will stop.");
-            showDebugOrExit();
-        }
     }
 
     public void computeUserCertAndKey() {
@@ -756,32 +710,38 @@ public class MainActivity extends Activity {
             p12.load(new ByteArrayInputStream(MainActivity.this.userP12),
                     MainActivity.this.password.toCharArray());
             Enumeration ee = p12.aliases();
+            addTodebugConfigOutput("My NUM OF ALIAS IS "+Integer.toString(p12.size()));
             while (ee.hasMoreElements()) {
                 String alias = (String) ee.nextElement();
                 MainActivity.this.userCertificate = (java.security.cert.X509Certificate) p12.getCertificate(alias);
+                MainActivity.this.userCertificates = p12.getCertificateChain(alias);
                 MainActivity.this.userPrivateKey = (PrivateKey) p12.getKey(alias,
                         MainActivity.this.password.toCharArray());
             }
             certIsGood = true;
         } catch (KeyStoreException e) {
             e.printStackTrace();
-            showInBox("Error CK1:" + e.getMessage());
+            addTodebugConfigOutput("Error CK1:" + e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
-            showInBox("Error CK2:" + e.getMessage());
+            addTodebugConfigOutput("Error CK2:" + e.getMessage());
             enableConfigButton(true);
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
-            showInBox("Error CK3:" + e.getMessage());
+            addTodebugConfigOutput("Error CK3:" + e.getMessage());
         } catch (CertificateException e) {
             e.printStackTrace();
-            showInBox("Error CK4:" + e.getMessage());
+            addTodebugConfigOutput("Error CK4:" + e.getMessage());
         } catch (UnrecoverableKeyException e) {
-            showInBox("Error CK5:" + e.getMessage());
+            addTodebugConfigOutput("Error CK5:" + e.getMessage());
             e.printStackTrace();
         }
 
         if (certIsGood) {
+            addTodebugConfigOutput("CertificateChain content is");
+            for ( java.security.cert.Certificate cert : MainActivity.this.userCertificates ){
+                addTodebugConfigOutput(cert.toString());
+            }
             if (MainActivity.this.api_version >= 29) {
                 configureWPA2TLSAfterAPI29();
             } else if (MainActivity.this.api_version > 19 && MainActivity.this.api_version < 29) {
@@ -800,11 +760,13 @@ public class MainActivity extends Activity {
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setPassword("test");
-        if (MainActivity.this.caCertificates.length>1){
+
+        if (MainActivity.this.caCertificates.length > 1) {
             mEnterpriseConfig.setCaCertificates(MainActivity.this.caCertificates);
         } else {
             mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
         }
+
         mEnterpriseConfig.setClientKeyEntry(MainActivity.this.userPrivateKey,
                 MainActivity.this.userCertificate);
 
@@ -991,16 +953,13 @@ public class MainActivity extends Activity {
     public void configureWPA2TLSAPI20() {
         addTodebugConfigOutput("=== configureWPA2TLSAPI20 ===");
         String displayName = MainActivity.this.userP12Name;
-        byte[] certificate = MainActivity.this.caCrt;
-
         Intent installIntent = KeyChain.createInstallIntent();
         installIntent.putExtra(KeyChain.EXTRA_NAME, displayName);
         try {
-            X509Certificate x509 = X509Certificate.getInstance(certificate);
-            MainActivity.this.caIssuer = x509.getIssuerDN().getName();
-            installIntent.putExtra(KeyChain.EXTRA_CERTIFICATE, x509.getEncoded());
+            installIntent.putExtra(KeyChain.EXTRA_CERTIFICATE, MainActivity.this.caCertificate.getEncoded());
         } catch (Exception e) {
-            showInBox("error while parsing certificate:" + e.getMessage());
+            addTodebugConfigOutput("error while parsing certificate:" + e.getMessage());
+            showDebugOrExit();
         }
         startActivityForResult(installIntent, MainActivity.this.FLOW_CA);
     }
@@ -1008,15 +967,15 @@ public class MainActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         addTodebugConfigOutput("=== onActivityResult ===");
-        showInBoxIfDebug("Activity Results");
+        addTodebugConfigOutput("Activity Results");
         if (requestCode == MainActivity.this.FLOW_CA) {
-            showInBoxIfDebug("FLOW_CA");
+            addTodebugConfigOutput("FLOW_CA");
             configureWPA2TLSBeforeAPI29();
         } else if (requestCode == MainActivity.this.FLOW_BIB) {
-            showInBoxIfDebug("FLOW_BIB");
+            addTodebugConfigOutput("FLOW_BIB");
             showDebugOrExit();
         } else {
-            showInBoxIfDebug("Request code is: "+requestCode);
+            addTodebugConfigOutput("Request code is: "+requestCode);
             showDebugOrExit();
         }
     }
@@ -1049,38 +1008,6 @@ public class MainActivity extends Activity {
 
     public void configureWPA2PEAPAfterAPI29() {
         addTodebugConfigOutput("=== configureWPA2PEAPAfterAPI29 ===");
-        InputStream is = new ByteArrayInputStream(MainActivity.this.caCrt);
-        BufferedInputStream bis = new BufferedInputStream(is);
-
-        CertificateFactory cf = null;
-        try {
-            cf = CertificateFactory.getInstance("X.509");
-        } catch (CertificateException e) {
-            e.printStackTrace();
-            showInBox("Error CC1:" + e.getMessage());
-        }
-
-        try {
-            while (bis.available() > 0) {
-                MainActivity.this.caCertificate = (java.security.cert.X509Certificate) cf.generateCertificate(bis);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            showInBox("Error CC2:" + e.getMessage());
-        } catch (CertificateException e) {
-            e.printStackTrace();
-            showInBox("Error CC3:" + e.getMessage());
-        }
-
-        try {
-            bis.close();
-            is.close();
-        } catch (IOException e) {
-            // If this fails, it isn't the end of the world.
-            e.printStackTrace();
-            showInBox("Error CC4:" + e.getMessage());
-        }
-
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
         mEnterpriseConfig.setIdentity(MainActivity.this.tlsUsername);
         mEnterpriseConfig.setAnonymousIdentity(MainActivity.this.tlsUsername);
@@ -1088,7 +1015,12 @@ public class MainActivity extends Activity {
         mEnterpriseConfig.setPhase2Method(WifiEnterpriseConfig.Phase2.MSCHAPV2);
         mEnterpriseConfig.setEapMethod(WifiEnterpriseConfig.Eap.PEAP);
         mEnterpriseConfig.setDomainSuffixMatch(MainActivity.this.serverCN);
-        mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
+        // Multiple Certificates
+        if (MainActivity.this.caCertificates.length > 1) {
+            mEnterpriseConfig.setCaCertificates(MainActivity.this.caCertificates);
+        } else {
+            mEnterpriseConfig.setCaCertificate(MainActivity.this.caCertificate);
+        }
 
         WifiNetworkSuggestion suggestionTmp= new WifiNetworkSuggestion.Builder()
                 .setSsid(MainActivity.this.ssid)
@@ -1115,7 +1047,7 @@ public class MainActivity extends Activity {
 
     public void configureWPA2PEAPBeforeAPI29() {
         addTodebugConfigOutput("=== configureWPA2PEAPBeforeAPI29 ===");
-        showInBoxIfDebug("Configuring " + MainActivity.this.ssid +
+        addTodebugConfigOutput("Configuring " + MainActivity.this.ssid +
                 " with username " + MainActivity.this.tlsUsername +
                 " and password " + MainActivity.this.password);
 
@@ -1249,19 +1181,19 @@ public class MainActivity extends Activity {
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                showInBoxIfDebug("Connection Suggestion Succeeded before");
+                addTodebugConfigOutput("Connection Suggestion Succeeded before");
                 String b = intent.getAction();
-                showInBoxIfDebug("Connection Suggestion Succeeded boolean " + b);
+                addTodebugConfigOutput("Connection Suggestion Succeeded boolean " + b);
                 if (!b.equals(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION)) {
                     return;
                 }
-                showInBoxIfDebug("Connection Suggestion Succeeded");
+                addTodebugConfigOutput("Connection Suggestion Succeeded");
             }
         };
         IntentFilter intentFilter = new IntentFilter(WifiManager.ACTION_WIFI_NETWORK_SUGGESTION_POST_CONNECTION);
         MainActivity.this.broadcastReceiver = broadcastReceiver;
         MainActivity.this.registerReceiver(broadcastReceiver, intentFilter);
-        // Note the follwing line is to close the receiver
+        // Note the following line is to close the receiver
         MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
     }
 
@@ -1270,12 +1202,12 @@ public class MainActivity extends Activity {
         WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int status = wifiManager.addNetworkSuggestions(suggestionsList);
         if (status == WifiManager.STATUS_NETWORK_SUGGESTIONS_SUCCESS) {
-            showInBoxIfDebug("Suggestion Added " + MainActivity.this.ssid);
+            addTodebugConfigOutput("Suggestion Added " + MainActivity.this.ssid);
             // Note: On android 10 the startActivityResults is ending quitely on the divice:
             startActivityForResult(new Intent(Settings.ACTION_WIFI_SETTINGS), MainActivity.this.FLOW_BIB);
         } else {
-            showInBoxIfDebug("The suggestion SSID "+ MainActivity.this.ssid +" failed !");
-            showInBoxIfDebug("Status " + status);
+            addTodebugConfigOutput("The suggestion SSID "+ MainActivity.this.ssid +" failed !");
+            addTodebugConfigOutput("Status " + status);
             showNetworkError(status);
             showDebugOrExit();
         }
@@ -1312,23 +1244,60 @@ public class MainActivity extends Activity {
         addTodebugConfigOutput("=== enableWifiConfiguration ===");
         WifiManager wifi = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
 
-        showInBoxIfDebug(config.toString());
+        addTodebugConfigOutput(config.toString());
         try {
             int id = wifi.addNetwork(config);
             if (id < 0) {
-                showInBoxIfDebug("Error creating new network.");
-                showInBox("Error: Cannot create the new network with ssid " + config.SSID);
+                addTodebugConfigOutput("Error creating new network.");
+                addTodebugConfigOutput("Error: Cannot create the new network with ssid " + config.SSID);
             } else {
-                showInBoxIfDebug("Created network with ID of " + id);
-                showInBox("Success ! Created new network " + config.SSID + "!");
+                addTodebugConfigOutput("Created network with ID of " + id);
+                addTodebugConfigOutput("Success ! Created new network " + config.SSID + "!");
                 wifi.saveConfiguration();
                 wifi.enableNetwork(id, true);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showInBox("Error Enable Conf:" + e.getMessage());
+            addTodebugConfigOutput("Error Enable Conf:" + e.getMessage());
         }
         showDebugOrExit();
+    }
+
+    public java.security.cert.X509Certificate createX509CertFromString(String myCert) {
+        java.security.cert.X509Certificate mycertificate = null;
+        addTodebugConfigOutput("=== computeCaCert ===");
+        InputStream is = new ByteArrayInputStream(myCert.getBytes());
+        BufferedInputStream bis = new BufferedInputStream(is);
+
+        CertificateFactory cf = null;
+        try {
+            cf = CertificateFactory.getInstance("X.509");
+        } catch (java.security.cert.CertificateException e) {
+            e.printStackTrace();
+            addTodebugConfigOutput("Error CC1:" + e.getMessage());
+        }
+
+        try {
+            while (bis.available() > 0) {
+                mycertificate = (java.security.cert.X509Certificate) cf.generateCertificate(bis);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            addTodebugConfigOutput("Error CC2:" + e.getMessage());
+        } catch (java.security.cert.CertificateException e) {
+            e.printStackTrace();
+            addTodebugConfigOutput("Error CC3:" + e.getMessage());
+        }
+
+        try {
+            bis.close();
+            is.close();
+        } catch (IOException e) {
+            // If this fails, it isn't the end of the world.
+            e.printStackTrace();
+            addTodebugConfigOutput("Error CC4:" + e.getMessage());
+        }
+        return mycertificate;
     }
 
 }
