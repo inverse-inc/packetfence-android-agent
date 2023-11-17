@@ -20,7 +20,7 @@ buildscript {
      */
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.2'
+        classpath 'com.android.tools.build:gradle:8.0.2'
     }
 }
 
@@ -38,7 +38,7 @@ apply plugin: 'com.android.application'
  */
 
 android {
-    compileSdkVersion=30
+    compileSdkVersion=33
     /**
      * compileSdkVersion specifies the Android API level Gradle should use to
      * compile your app. This means your app can use the API features included in
@@ -71,13 +71,13 @@ android {
         minSdkVersion 14
 
         // Specifies the API level used to test the app.
-        targetSdkVersion 30
+        targetSdkVersion 33
 
         // Defines the version number of your app.
         versionCode 16
 
         // Defines a user-friendly version name for your app.
-        versionName "2.5.3"
+        versionName "2.6.0"
     }
 
     /**
@@ -129,6 +129,7 @@ android {
             exclude "ldpi", "tvdpi", "xxxhdpi", "400dpi", "560dpi"
         }
     }
+    namespace 'org.packetfence.agent'
 }
 
 /**
