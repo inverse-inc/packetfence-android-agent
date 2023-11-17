@@ -74,7 +74,7 @@ android {
         targetSdkVersion 33
 
         // Defines the version number of your app.
-        versionCode 16
+        versionCode 17
 
         // Defines a user-friendly version name for your app.
         versionName "2.6.0"
