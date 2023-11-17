@@ -77,7 +77,7 @@ android {
         versionCode 16
 
         // Defines a user-friendly version name for your app.
-        versionName "2.5.3"
+        versionName "2.6.0"
     }
 
     /**
