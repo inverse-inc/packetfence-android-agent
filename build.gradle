@@ -20,7 +20,7 @@ buildscript {
      */
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath 'com.android.tools.build:gradle:8.4.1'
     }
 }
 
@@ -38,7 +38,7 @@ apply plugin: 'com.android.application'
  */
 
 android {
-    compileSdkVersion=33
+    compileSdkVersion=34
     /**
      * compileSdkVersion specifies the Android API level Gradle should use to
      * compile your app. This means your app can use the API features included in
@@ -71,13 +71,13 @@ android {
         minSdkVersion 14
 
         // Specifies the API level used to test the app.
-        targetSdkVersion 33
+        targetSdkVersion 34
 
         // Defines the version number of your app.
-        versionCode 17
+        versionCode 18
 
         // Defines a user-friendly version name for your app.
-        versionName "2.6.0"
+        versionName "2.6.1"
     }
 
     /**
@@ -130,6 +130,7 @@ android {
         }
     }
     namespace 'org.packetfence.agent'
+    buildToolsVersion '34.0.0'
 }
 
 /**
@@ -141,7 +142,7 @@ dependencies {
     //implementation project(":libs")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.annotation:annotation:1.4.0'
+    implementation 'androidx.annotation:annotation:1.8.0'
 }
 
 sourceSets {

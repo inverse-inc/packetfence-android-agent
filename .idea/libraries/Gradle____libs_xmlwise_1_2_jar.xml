@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: ./libs/xmlwise-1_2.jar">
+  <library name="Gradle: ./libs/xmlwise-1_2.jar" external-system-id="GRADLE">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/libs/xmlwise-1_2.jar!/" />
     </CLASSES>
