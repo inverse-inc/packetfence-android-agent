@@ -81,6 +81,43 @@ android {
     }
 
     /**
+     * The signingConfigs {} block configures how release builds are signed.
+     * Credentials are read from environment variables (CI) or
+     * ~/.gradle/gradle.properties (local development).
+     *
+     * WARNING: NEVER put PF_KEYSTORE_* values in the project's gradle.properties
+     * (packetfence-android-agent/gradle.properties) — that file is committed to
+     * the public repo. Use ~/.gradle/gradle.properties instead.
+     *
+     * See ai-documentation-packetfence-android-agent/release-signing.md for full setup.
+     */
+
+    signingConfigs {
+        release {
+            // All four are read from env vars (CI) or ~/.gradle/gradle.properties (local).
+            // The storeFilePath check is deferred to task-graph evaluation so that
+            // debug builds (assembleDebug) are never blocked by missing release credentials.
+            def storeFilePath = System.getenv("PF_KEYSTORE_PATH") ?: project.findProperty("PF_KEYSTORE_PATH")
+            storeFile      storeFilePath ? file(storeFilePath) : null
+            storePassword  System.getenv("PF_KEYSTORE_PASS") ?: project.findProperty("PF_KEYSTORE_PASS")
+            keyAlias       System.getenv("PF_KEY_ALIAS")     ?: project.findProperty("PF_KEY_ALIAS")
+            keyPassword    System.getenv("PF_KEY_PASS")      ?: project.findProperty("PF_KEY_PASS")
+        }
+    }
+
+    // Fail loudly when release signing credentials are absent, but only when a
+    // release assembly task is actually scheduled.  This keeps debug builds clean.
+    gradle.taskGraph.whenReady { graph ->
+        def needsReleaseSigning = graph.allTasks.any { it.name.toLowerCase().contains("release") }
+        if (needsReleaseSigning) {
+            def storeFilePath = System.getenv("PF_KEYSTORE_PATH") ?: project.findProperty("PF_KEYSTORE_PATH")
+            if (!storeFilePath) {
+                throw new GradleException("PF_KEYSTORE_PATH not set. Configure via environment variable, ~/.gradle/gradle.properties, or skip release builds with -x assembleRelease")
+            }
+        }
+    }
+
+    /**
      * The buildTypes {} block is where you can configure multiple build types.
      * By default, the build system defines two build types: debug and release. The
      * debug build type is not explicitly shown in the default build configuration,
@@ -96,8 +133,9 @@ android {
          */
 
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true // Enables code shrinking for the release build type.
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -125,14 +163,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.annotation:annotation:1.8.0'
-}
-
-sourceSets {
-    main {
-        java {
-            srcDirs = ['src']
-        }
-    }
 }
 
 allprojects {
