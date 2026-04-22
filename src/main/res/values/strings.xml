@@ -4,5 +4,6 @@
     <string name="app_name">PacketFence Agent</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="please_wait_configuring">Please wait\nNow Configuring...</string>
 
 </resources>
