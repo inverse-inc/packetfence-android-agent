@@ -111,24 +111,6 @@ android {
      * an Android device, simultaneously.
      */
 
-    /**
-     * The splits {} block is where you can configure different APK builds that
-     * each contain only code and resources for a supported screen density or
-     * ABI. You'll also need to configure your build so that each APK has a
-     * different versionCode.
-     */
-
-    splits {
-        // Screen density split settings
-        density {
-
-            // Enable or disable the density split mechanism
-            enable false
-
-            // Exclude these densities from splits
-            exclude "ldpi", "tvdpi", "xxxhdpi", "400dpi", "560dpi"
-        }
-    }
     namespace 'org.packetfence.agent'
     buildToolsVersion '34.0.0'
 }
