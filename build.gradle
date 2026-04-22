@@ -106,9 +106,17 @@ android {
     }
 
     // Fail loudly when release signing credentials are absent, but only when a
-    // release assembly task is actually scheduled.  This keeps debug builds clean.
+    // release APK/AAB assembly is actually requested.  The exact task names that
+    // require a signed keystore are assembleRelease and bundleRelease (the AAB
+    // equivalent).  Build pipeline tasks whose names merely *contain* "Release"
+    // (e.g. compileReleaseJavaWithJavac, bundleReleaseClassesToRuntimeJar) do
+    // not need signing credentials and must not trigger this guard, so we match
+    // only the exact task names.
     gradle.taskGraph.whenReady { graph ->
-        def needsReleaseSigning = graph.allTasks.any { it.name.toLowerCase().contains("release") }
+        def SIGNING_TASKS = ['assembleRelease', 'bundleRelease'] as Set
+        def needsReleaseSigning = graph.allTasks.any { task ->
+            SIGNING_TASKS.contains(task.name)
+        }
         if (needsReleaseSigning) {
             def storeFilePath = System.getenv("PF_KEYSTORE_PATH") ?: project.findProperty("PF_KEYSTORE_PATH")
             if (!storeFilePath) {
@@ -149,6 +157,15 @@ android {
      * an Android device, simultaneously.
      */
 
+    /**
+     * testOptions: allow Android framework stubs to return default values
+     * during host JVM unit tests (junit), so tests don't need to mock every
+     * Android API call.
+     */
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
     namespace 'org.packetfence.agent'
     buildToolsVersion '34.0.0'
 }
@@ -161,8 +178,28 @@ android {
 dependencies {
     //implementation project(":libs")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.annotation:annotation:1.8.0'
+
+    // Host JVM unit-test dependencies (characterisation tests, Plan 03 blocker)
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
+    testImplementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
+        }
+    }
 }
 
 allprojects {
