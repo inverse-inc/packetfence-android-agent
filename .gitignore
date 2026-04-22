@@ -3,3 +3,13 @@ gen
 build
 release
 .DS_Store
+.gradle/
+*.apk
+local.properties
+*.iml
+.idea/
+!.idea/codeStyles/
+!.idea/inspectionProfiles/
+*.swp
+*.swo
+*~
