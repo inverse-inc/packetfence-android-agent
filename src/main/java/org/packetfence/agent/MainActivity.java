@@ -55,7 +55,6 @@ public class MainActivity extends Activity {
 
     private boolean isDebugMode = false;
     private boolean isDebugSteps = false;
-    private int debugCount = 0;
     private static final int FLOW_CA = 20;
     private static final int FLOW_BIB = 25;
     public static String discoveryUrl = "http://wireless-profiles.packetfence.org/packetfence-android-agent-test";
@@ -92,20 +91,16 @@ public class MainActivity extends Activity {
      * Set DEBUG
      */
     public void changeDebugStatus(View view) {
-        if (debugCount<2){
-            debugCount+=1;
+        if (isDebugMode || isDebugSteps) {
+            isDebugSteps = false;
+            isDebugMode = false;
+            view.setBackgroundResource(R.drawable.btn_debug_off);
         } else {
-            showInBox("Change debug status");
-            if (isDebugMode || isDebugSteps){
-                isDebugSteps = false;
-                isDebugMode = false;
-            } else {
-                isDebugSteps = true;
-                isDebugMode = true;
-            }
-            updateDebugTextVisible(isDebugSteps);
-            debugCount=0;
+            isDebugSteps = true;
+            isDebugMode = true;
+            view.setBackgroundResource(R.drawable.btn_debug_on);
         }
+        updateDebugTextVisible(isDebugSteps);
     }
 
     public void updateDebugTextVisible(boolean bool) {
@@ -209,7 +204,7 @@ public class MainActivity extends Activity {
     }
 
     public void enableConfigButton(boolean bool) {
-        Button b = findViewById(R.id.button1);
+        Button b = findViewById(R.id.button_configure);
         b.setEnabled(bool);
     }
 
