@@ -1,7 +1,6 @@
 package org.packetfence.agent.plist;
 
 import org.junit.Test;
-import org.junit.Before;
 import xmlwise.Plist;
 import xmlwise.XmlParseException;
 

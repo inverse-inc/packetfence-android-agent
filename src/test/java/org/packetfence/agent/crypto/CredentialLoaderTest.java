@@ -1,13 +1,11 @@
 package org.packetfence.agent.crypto;
 
 import org.junit.Test;
-import org.junit.Before;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.*;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Enumeration;
 
@@ -103,16 +101,12 @@ public class CredentialLoaderTest {
     }
 
     @Test
-    public void loadP12NullBytes_throwsException() {
-        try {
-            KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(null, CORRECT_PASSWORD.toCharArray());
-            // Null stream is allowed by the spec (creates empty keystore), so just
-            // verify the keystore has no entries rather than expecting a throw.
-            assertEquals(0, ks.size());
-        } catch (Exception e) {
-            // Also acceptable — any failure on null input is fine for our characterisation
-        }
+    public void loadP12NullStream_createsEmptyKeystore() throws Exception {
+        // Per KeyStore.load(InputStream, char[]) spec: a null input stream
+        // initialises the keystore to an empty state (no exception thrown).
+        KeyStore ks = KeyStore.getInstance("PKCS12");
+        ks.load(null, CORRECT_PASSWORD.toCharArray());
+        assertEquals(0, ks.size());
     }
 
     // -- private helper ---------------------------------------------------

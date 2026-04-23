@@ -113,7 +113,7 @@ public class WifiProvisionerTest {
         long pkcs12Count = payloads.stream()
                 .filter(o -> "com.apple.security.pkcs12".equals(((HashMap<?, ?>) o).get("PayloadType")))
                 .count();
-        assertTrue("TLS profile must have exactly one pkcs12 section", pkcs12Count >= 1);
+        assertEquals("TLS profile must have exactly one pkcs12 section", 1L, pkcs12Count);
     }
 
     /** TLS profile pkcs12 section carries the PayloadCertificateFileName (used as tlsUsername). */
