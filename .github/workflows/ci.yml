@@ -19,7 +19,7 @@ jobs:
       - name: Lint
         run: ./gradlew lint
       - name: Rename APK to flag it is unsigned for testing
-        run: mv build/outputs/apk/debug/app-debug.apk build/outputs/apk/debug/app-unsigned_for_testing.apk
+        run: mv build/outputs/apk/debug/*-debug.apk build/outputs/apk/debug/app-unsigned_for_testing.apk
       - name: Upload unsigned-for-testing APK
         uses: actions/upload-artifact@v4
         with:
