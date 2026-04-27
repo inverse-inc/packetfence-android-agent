@@ -41,7 +41,7 @@ verify-no-apache-http: minifyReleaseWithR8
 	total=0; \
 	for dex in $$DEX_DIR/*.dex; do \
 	  [ -f "$$dex" ] || continue; \
-	  count=$$(grep -c "org/apache/http" "$$dex" || true); \
+	  count=$$(LC_ALL=C grep -a -o "org/apache/http" "$$dex" | wc -l); \
 	  echo "$$dex: $$count org.apache.http references"; \
 	  total=$$((total + count)); \
 	done; \
