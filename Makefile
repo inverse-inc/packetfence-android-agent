@@ -11,7 +11,7 @@ DOCKER_RUN = docker run --rm \
 	-w /workspace \
 	$(IMAGE)
 
-.PHONY: help docker-image assembleDebug minifyReleaseWithR8 verify-no-apache-http test all clean
+.PHONY: help docker-image assembleDebug minifyReleaseWithR8 verify-no-apache-http lint test all clean
 
 help:
 	@echo "Targets:"
@@ -19,8 +19,9 @@ help:
 	@echo "  assembleDebug         ./gradlew clean assembleDebug inside the container."
 	@echo "  minifyReleaseWithR8   ./gradlew minifyReleaseWithR8 inside the container."
 	@echo "  verify-no-apache-http minifyReleaseWithR8 + scan the release DEX for org.apache.http (CI guard)."
+	@echo "  lint                  ./gradlew lint inside the container."
 	@echo "  test                  ./gradlew test inside the container."
-	@echo "  all                   assembleDebug + verify-no-apache-http + test."
+	@echo "  all                   assembleDebug + verify-no-apache-http + lint + test (mirrors CI)."
 	@echo "  clean                 Remove build/ and the local gradle cache."
 
 docker-image:
@@ -50,10 +51,13 @@ verify-no-apache-http: minifyReleaseWithR8
 	fi; \
 	echo "OK: 0 org.apache.http references in release DEX."
 
+lint: docker-image $(CACHE_DIR)
+	$(DOCKER_RUN) ./gradlew lint
+
 test: docker-image $(CACHE_DIR)
 	$(DOCKER_RUN) ./gradlew test
 
-all: assembleDebug verify-no-apache-http test
+all: assembleDebug verify-no-apache-http lint test
 
 clean:
 	rm -rf build $(CACHE_DIR)
