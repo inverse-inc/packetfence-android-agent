@@ -39,12 +39,18 @@ minifyReleaseWithR8: docker-image $(CACHE_DIR)
 verify-no-apache-http: minifyReleaseWithR8
 	@DEX_DIR=build/intermediates/dex/release/minifyReleaseWithR8; \
 	total=0; \
+	scanned=0; \
 	for dex in $$DEX_DIR/*.dex; do \
 	  [ -f "$$dex" ] || continue; \
+	  scanned=$$((scanned + 1)); \
 	  count=$$(LC_ALL=C grep -a -o "org/apache/http" "$$dex" | wc -l); \
 	  echo "$$dex: $$count org.apache.http references"; \
 	  total=$$((total + count)); \
 	done; \
+	if [ "$$scanned" -eq 0 ]; then \
+	  echo "FAIL: no DEX files found under $$DEX_DIR (did minifyReleaseWithR8 run?)"; \
+	  exit 1; \
+	fi; \
 	if [ "$$total" -ne 0 ]; then \
 	  echo "FAIL: $$total org.apache.http references in release DEX (16 KB-page regression)"; \
 	  exit 1; \
