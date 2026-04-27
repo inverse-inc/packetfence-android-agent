@@ -166,6 +166,11 @@ android {
         unitTests.returnDefaultValues = true
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
     namespace 'org.packetfence.agent'
 }
 
