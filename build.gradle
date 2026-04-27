@@ -74,10 +74,55 @@ android {
         targetSdkVersion 36
 
         // Defines the version number of your app.
-        versionCode 19
+        versionCode 20
 
         // Defines a user-friendly version name for your app.
-        versionName "2.6.2"
+        versionName "2.7.0"
+    }
+
+    /**
+     * The signingConfigs {} block configures how release builds are signed.
+     * Credentials are read from environment variables (CI) or
+     * ~/.gradle/gradle.properties (local development).
+     *
+     * WARNING: NEVER put PF_KEYSTORE_* values in the project's gradle.properties
+     * (packetfence-android-agent/gradle.properties) — that file is committed to
+     * the public repo. Use ~/.gradle/gradle.properties instead.
+     *
+     * See ai-documentation-packetfence-android-agent/release-signing.md for full setup.
+     */
+
+    signingConfigs {
+        release {
+            // All four are read from env vars (CI) or ~/.gradle/gradle.properties (local).
+            // The storeFilePath check is deferred to task-graph evaluation so that
+            // debug builds (assembleDebug) are never blocked by missing release credentials.
+            def storeFilePath = System.getenv("PF_KEYSTORE_PATH") ?: project.findProperty("PF_KEYSTORE_PATH")
+            storeFile      storeFilePath ? file(storeFilePath) : null
+            storePassword  System.getenv("PF_KEYSTORE_PASS") ?: project.findProperty("PF_KEYSTORE_PASS")
+            keyAlias       System.getenv("PF_KEY_ALIAS")     ?: project.findProperty("PF_KEY_ALIAS")
+            keyPassword    System.getenv("PF_KEY_PASS")      ?: project.findProperty("PF_KEY_PASS")
+        }
+    }
+
+    // Fail loudly when release signing credentials are absent, but only when a
+    // release APK/AAB assembly is actually requested.  The exact task names that
+    // require a signed keystore are assembleRelease and bundleRelease (the AAB
+    // equivalent).  Build pipeline tasks whose names merely *contain* "Release"
+    // (e.g. compileReleaseJavaWithJavac, bundleReleaseClassesToRuntimeJar) do
+    // not need signing credentials and must not trigger this guard, so we match
+    // only the exact task names.
+    gradle.taskGraph.whenReady { graph ->
+        def SIGNING_TASKS = ['assembleRelease', 'bundleRelease'] as Set
+        def needsReleaseSigning = graph.allTasks.any { task ->
+            SIGNING_TASKS.contains(task.name)
+        }
+        if (needsReleaseSigning) {
+            def storeFilePath = System.getenv("PF_KEYSTORE_PATH") ?: project.findProperty("PF_KEYSTORE_PATH")
+            if (!storeFilePath) {
+                throw new GradleException("PF_KEYSTORE_PATH not set. Configure via environment variable, ~/.gradle/gradle.properties, or skip release builds with -x assembleRelease")
+            }
+        }
     }
 
     /**
@@ -96,8 +141,9 @@ android {
          */
 
         release {
+            signingConfig signingConfigs.release
             minifyEnabled true // Enables code shrinking for the release build type.
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -112,23 +158,14 @@ android {
      */
 
     /**
-     * The splits {} block is where you can configure different APK builds that
-     * each contain only code and resources for a supported screen density or
-     * ABI. You'll also need to configure your build so that each APK has a
-     * different versionCode.
+     * testOptions: allow Android framework stubs to return default values
+     * during host JVM unit tests (junit), so tests don't need to mock every
+     * Android API call.
      */
-
-    splits {
-        // Screen density split settings
-        density {
-
-            // Enable or disable the density split mechanism
-            enable false
-
-            // Exclude these densities from splits
-            exclude "ldpi", "tvdpi", "xxxhdpi", "400dpi", "560dpi"
-        }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
+
     namespace 'org.packetfence.agent'
     buildToolsVersion '34.0.0'
 }
@@ -141,14 +178,26 @@ android {
 dependencies {
     //implementation project(":libs")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.annotation:annotation:1.8.0'
+
+    // Host JVM unit-test dependencies (characterisation tests, Plan 03 blocker)
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.bouncycastle:bcpkix-jdk18on:1.78.1'
+    testImplementation fileTree(dir: 'libs', include: ['*.jar'])
 }
 
 sourceSets {
     main {
         java {
-            srcDirs = ['src']
+            srcDirs = ['src/main/java']
+        }
+    }
+    test {
+        java {
+            srcDirs = ['src/test/java']
+        }
+        resources {
+            srcDirs = ['src/test/resources']
         }
     }
 }

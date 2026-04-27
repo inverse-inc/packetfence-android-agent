@@ -1,5 +1,6 @@
 package org.packetfence.agent;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -33,7 +34,8 @@ import com.android.volley.toolbox.Volley;
 import xmlwise.Plist;
 import xmlwise.XmlParseException;
 
-import javax.security.cert.X509Certificate;
+import androidx.annotation.RequiresApi;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -44,10 +46,8 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,10 +55,8 @@ public class MainActivity extends Activity {
 
     private boolean isDebugMode = false;
     private boolean isDebugSteps = false;
-    private int debugCount = 0;
     private static final int FLOW_CA = 20;
     private static final int FLOW_BIB = 25;
-    private static final int api_version = Build.VERSION.SDK_INT;
     public static String discoveryUrl = "http://wireless-profiles.packetfence.org/packetfence-android-agent-test";
     // Just used for testing purposes when you want to force a URL to be used
     // A production build should always have this value set to null
@@ -72,7 +70,6 @@ public class MainActivity extends Activity {
     public String profileDomainName = null;
     public String profileProto = "https";
     public String profilePath = "/profile.xml";
-    private HashMap profile;
     private String userP12Name;
     private byte[] userP12;
     private String password = "";
@@ -80,7 +77,6 @@ public class MainActivity extends Activity {
     private String serverCN = "";
     private String ssid;
     private String tlsUsername;
-    private Context context;
     private PrivateKey userPrivateKey;
     private java.security.cert.X509Certificate userCertificate;
     private java.security.cert.Certificate[] userCertificates;
@@ -95,20 +91,16 @@ public class MainActivity extends Activity {
      * Set DEBUG
      */
     public void changeDebugStatus(View view) {
-        if (debugCount<2){
-            debugCount+=1;
+        if (isDebugMode || isDebugSteps) {
+            isDebugSteps = false;
+            isDebugMode = false;
+            view.setBackgroundResource(R.drawable.btn_debug_off);
         } else {
-            showInBox("Change debug status");
-            if (isDebugMode || isDebugSteps){
-                isDebugSteps = false;
-                isDebugMode = false;
-            } else {
-                isDebugSteps = true;
-                isDebugMode = true;
-            }
-            updateDebugTextVisible(isDebugSteps);
-            debugCount=0;
+            isDebugSteps = true;
+            isDebugMode = true;
+            view.setBackgroundResource(R.drawable.btn_debug_on);
         }
+        updateDebugTextVisible(isDebugSteps);
     }
 
     public void updateDebugTextVisible(boolean bool) {
@@ -167,14 +159,10 @@ public class MainActivity extends Activity {
             alert00.setTitle("Debug Output");
             alert00.setView(showText);
             alert00.setPositiveButton(mess,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            MainActivity.this.done_configuring = true;
-                        }
-                    });
+                    (dialog, which) -> done_configuring = true);
             alert00.show();
         } else {
-            MainActivity.this.done_configuring = true;
+            done_configuring = true;
         }
     }
 
@@ -185,12 +173,9 @@ public class MainActivity extends Activity {
 
     public void stopApplicationAfterSeconds(int sec) {
         int inum = sec * 1000;
-        Long lnum = Long.valueOf(inum);
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-            }
-        }, lnum);
+        handler.postDelayed(() -> {
+        }, inum);
         MainActivity.this.finish();
         MainActivity.this.moveTaskToBack(true);
     }
@@ -219,7 +204,7 @@ public class MainActivity extends Activity {
     }
 
     public void enableConfigButton(boolean bool) {
-        Button b = findViewById(R.id.button1);
+        Button b = findViewById(R.id.button_configure);
         b.setEnabled(bool);
     }
 
@@ -245,7 +230,7 @@ public class MainActivity extends Activity {
             addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_REMOVE_INVALID");
         }
         // Added in API 30
-        if (MainActivity.this.api_version >= 30) {
+        if (Build.VERSION.SDK_INT >= 30) {
             if (iman == WifiManager.STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED){
                 addTodebugConfigOutput("network_error STATUS_NETWORK_SUGGESTIONS_ERROR_ADD_NOT_ALLOWED");
             }
@@ -281,8 +266,7 @@ public class MainActivity extends Activity {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         llParam.gravity = Gravity.CENTER;
         TextView tvText = new TextView(this);
-        tvText.setText("Please wait\n" +
-                "Now Configuring...");
+        tvText.setText(R.string.please_wait_configuring);
         tvText.setTextColor(Color.parseColor("#ffffff"));
         tvText.setTextSize(18);
         tvText.setLayoutParams(llParam);
@@ -305,21 +289,18 @@ public class MainActivity extends Activity {
             dialog.getWindow().setAttributes(layoutParams);
         }
         // Show it for at least 5 seconds...
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                Looper.prepare();
-                try {
-                    int t = 0;
-                    while (!MainActivity.this.done_configuring || t < 5000) {
-                        Thread.sleep(100);
-                        t += 100;
-                    }
-                } catch (Exception e) {
+        new Thread(() -> {
+            // TODO Auto-generated method stub
+            Looper.prepare();
+            try {
+                int t = 0;
+                while (!done_configuring || t < 5000) {
+                    Thread.sleep(100);
+                    t += 100;
                 }
-                dialog.dismiss();
+            } catch (Exception e) {
             }
+            dialog.dismiss();
         }).start();
     }
 
@@ -330,21 +311,18 @@ public class MainActivity extends Activity {
         myPd_ring.setCancelable(false);
 
         // Show it for at least 5 seconds...
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                // TODO Auto-generated method stub
-                Looper.prepare();
-                try {
-                    int t = 0;
-                    while (!MainActivity.this.done_configuring || t < 5000) {
-                        Thread.sleep(100);
-                        t += 100;
-                    }
-                } catch (Exception e) {
+        new Thread(() -> {
+            // TODO Auto-generated method stub
+            Looper.prepare();
+            try {
+                int t = 0;
+                while (!done_configuring || t < 5000) {
+                    Thread.sleep(100);
+                    t += 100;
                 }
-                myPd_ring.dismiss();
+            } catch (Exception e) {
             }
+            myPd_ring.dismiss();
         }).start();
     }
 
@@ -352,12 +330,10 @@ public class MainActivity extends Activity {
      * FROM CONFIGURATION BUTTON
      */
     public void configure(View view) throws KeyManagementException, KeyStoreException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, IOException {
-        MainActivity.this.context = view.getContext();
-
         //Reset Values
         debugOutputSteps = "\n\n####\nSteps\n####\n";
         debugConfigOutput = "API version: "+Build.VERSION.SDK_INT;
-        if (MainActivity.this.api_version >= 29) {
+        if (Build.VERSION.SDK_INT >= 29) {
             showDialogAfterAPI29();
         } else {
             showDialogBeforeAPI29();
@@ -384,40 +360,33 @@ public class MainActivity extends Activity {
 
         org.packetfence.agent.DiscoveryStringRequest stringRequest =
                 new org.packetfence.agent.DiscoveryStringRequest(Request.Method.GET, MainActivity.this.discoveryUrl,
-                new Response.Listener<org.packetfence.agent.DiscoveryStringRequest.ResponseM>() {
-
-                    @Override
-                    public void onResponse(org.packetfence.agent.DiscoveryStringRequest.ResponseM response) {
-                        addTodebugConfigOutput("Profile domain name probe was successful");
-                        String location = null;
-                        if(response.headers.get("Location") != null) {
-                            location = response.headers.get("Location");
-                        }
-                        else if (response.headers.get("location") != null) {
-                            location = response.headers.get("location");
-                        }
-                        try {
-                            addTodebugConfigOutput("Found location header value: " + location);
-                            URL url = new URL(location);
-                            MainActivity.this.profileDomainName = url.getHost();
-                            addTodebugConfigOutput("Found domain name: " + MainActivity.this.profileDomainName);
-                            fetchXML();
-                        } catch (MalformedURLException e) {
-                            addTodebugConfigOutput("Unable to detect domain name from domain probe");
-                            showDebugOrExit();
-                        }
+                response -> {
+                    addTodebugConfigOutput("Profile domain name probe was successful");
+                    String location = null;
+                    if(response.headers.get("Location") != null) {
+                        location = response.headers.get("Location");
                     }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse == null) {
-                    addTodebugConfigOutput("Network error while finding profile domain name: " + error.getLocalizedMessage());
-                } else {
-                    addTodebugConfigOutput("Error fetching profile");
-                }
-                showDebugOrExit();
-            }
-        });
+                    else if (response.headers.get("location") != null) {
+                        location = response.headers.get("location");
+                    }
+                    try {
+                        addTodebugConfigOutput("Found location header value: " + location);
+                        URL url = new URL(location);
+                        MainActivity.this.profileDomainName = url.getHost();
+                        addTodebugConfigOutput("Found domain name: " + MainActivity.this.profileDomainName);
+                        fetchXML();
+                    } catch (MalformedURLException e) {
+                        addTodebugConfigOutput("Unable to detect domain name from domain probe");
+                        showDebugOrExit();
+                    }
+                }, error -> {
+                    if (error.networkResponse == null) {
+                        addTodebugConfigOutput("Network error while finding profile domain name: " + error.getLocalizedMessage());
+                    } else {
+                        addTodebugConfigOutput("Error fetching profile");
+                    }
+                    showDebugOrExit();
+                });
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         queue.add(stringRequest);
     }
@@ -435,25 +404,19 @@ public class MainActivity extends Activity {
         }
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, profileUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        addTodebugConfigOutput("Downloaded profile successfully");
-                        fetchXMLCallback(response);
+                response -> {
+                    addTodebugConfigOutput("Downloaded profile successfully");
+                    fetchXMLCallback(response);
+                }, error -> {
+                    if (error.networkResponse == null) {
+                        addTodebugConfigOutput("Network error: " + error.getLocalizedMessage());
+                    } else if (error.networkResponse.statusCode == 404) {
+                        addTodebugConfigOutput("Profile not found on server.");
+                    } else {
+                        addTodebugConfigOutput("Error fetching profile ");
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if (error.networkResponse == null) {
-                    addTodebugConfigOutput("Network error: " + error.getLocalizedMessage());
-                } else if (error.networkResponse.statusCode == 404) {
-                    addTodebugConfigOutput("Profile not found on server.");
-                } else {
-                    addTodebugConfigOutput("Error fetching profile ");
-                }
-                showDebugOrExit();
-            }
-        });
+                    showDebugOrExit();
+                });
         RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
         queue.add(stringRequest);
     }
@@ -479,7 +442,6 @@ public class MainActivity extends Activity {
 
             ArrayList<?> category = (ArrayList<?>) hashMap
                     .get("PayloadContent");
-            MainActivity.this.profile = hashMap;
 
             categoryObj = category.toArray();
         } catch (XmlParseException e) {
@@ -524,9 +486,9 @@ public class MainActivity extends Activity {
     public void configureWirelessConnectionWEP() {
         addTodebugConfigOutput("=== configureWirelessConnectionWEP ===");
         // Check the api version
-        if (MainActivity.this.api_version >= 29) {
+        if (Build.VERSION.SDK_INT >= 29) {
             configureWEPAfterAPI29();
-        } else if (MainActivity.this.api_version < 29) {
+        } else if (Build.VERSION.SDK_INT < 29) {
             configureWEPBeforeAPI29();
         }
     }
@@ -580,7 +542,7 @@ public class MainActivity extends Activity {
             ArrayList<?> eapTypes = (ArrayList<?>) eapClientConfigurationHashMap.get("AcceptEAPTypes");
             MainActivity.this.caCertificatesTmp = new ArrayList<java.security.cert.X509Certificate>();
 
-            if (eapTypes.contains(Integer.valueOf(EAPTYPE_TLS))) {
+            if (eapTypes.contains(EAPTYPE_TLS)) {
                 addTodebugConfigOutput("Detected WPA EAP-TLS configuration");
                 // We skip the first section
                 for (int i = 1; i < categoryObj.length; i++) {
@@ -623,7 +585,7 @@ public class MainActivity extends Activity {
                         }
                     }
                 }
-                if (MainActivity.this.serverCN.equals("") && MainActivity.this.api_version >= 34){
+                if (MainActivity.this.serverCN.equals("") && Build.VERSION.SDK_INT >= 34){
                     misconfiguration();
                 } else {
                     if (!MainActivity.this.caCertificatesTmp.isEmpty()) {
@@ -632,7 +594,7 @@ public class MainActivity extends Activity {
                     configureWirelessConnectionWPA2TLS();
                 }
 
-            } else if (eapTypes.contains(Integer.valueOf(EAPTYPE_PEAP))) {
+            } else if (eapTypes.contains(EAPTYPE_PEAP)) {
                 addTodebugConfigOutput("Detected WPA EAP-PEAP configuration");
                 MainActivity.this.tlsUsername = (String) eapClientConfigurationHashMap.get("UserName");
                 addTodebugConfigOutput("tlsUsername >>"+MainActivity.this.tlsUsername);
@@ -663,7 +625,7 @@ public class MainActivity extends Activity {
                         }
                     }
                 }
-                if (MainActivity.this.caCrtString.isEmpty() && MainActivity.this.api_version >= 34){
+                if (MainActivity.this.caCrtString.isEmpty() && Build.VERSION.SDK_INT >= 34){
                     misconfiguration();
                 } else {
                     if (MainActivity.this.caCertificatesTmp.size() > 1) {
@@ -692,11 +654,9 @@ public class MainActivity extends Activity {
         alert02.setTitle("Certificate password");
         alert02.setMessage("Enter the password to unlock the certificate for user: " + MainActivity.this.tlsUsername);
         alert02.setView(input);
-        alert02.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                MainActivity.this.password = input.getText().toString();
-                computeUserCertAndKey();
-            }
+        alert02.setPositiveButton("Ok", (dialog, whichButton) -> {
+            MainActivity.this.password = input.getText().toString();
+            computeUserCertAndKey();
         });
         alert02.show();
     }
@@ -742,9 +702,9 @@ public class MainActivity extends Activity {
             for ( java.security.cert.Certificate cert : MainActivity.this.userCertificates ){
                 addTodebugConfigOutput(cert.toString());
             }
-            if (MainActivity.this.api_version >= 29) {
+            if (Build.VERSION.SDK_INT >= 29) {
                 configureWPA2TLSAfterAPI29();
-            } else if (MainActivity.this.api_version > 19 && MainActivity.this.api_version < 29) {
+            } else if (Build.VERSION.SDK_INT > 19 && Build.VERSION.SDK_INT < 29) {
                 configureWPA2TLSAPI20();
             } else {
                 configureWPA2TLSBeforeAPI29();
@@ -755,6 +715,7 @@ public class MainActivity extends Activity {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void configureWPA2TLSAfterAPI29() {
         addTodebugConfigOutput("=== configureWPA2TLSAfterAPI29 ===");
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
@@ -801,15 +762,12 @@ public class MainActivity extends Activity {
         alertMiss.setTitle("Server Misconfiguration");
         alertMiss.setMessage(sb);
         alertMiss.setPositiveButton(mess,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        showDebugOrExit();
-                    }
-                });
+                (dialog, which) -> showDebugOrExit());
         alertMiss.show();
     }
 
     // Alert Dialog for API 29 Part 1
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void alertDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         StringBuilder sb = new StringBuilder();
         sb.append("\nStep 1:\n");
@@ -832,22 +790,15 @@ public class MainActivity extends Activity {
         alert03.setTitle("Next steps:");
         alert03.setMessage(sb);
         alert03.setPositiveButton(mess,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        howToDialogAfterAPI29(suggestionsList);
-                    }
-                });
+                (dialog, which) -> howToDialogAfterAPI29(suggestionsList));
         if (isDebugMode || isDebugSteps) {
             alert03.setNegativeButton("Show Debug",
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            showDebugConfigOutput(suggestionsList);
-                        }
-                    });
+                    (dialog, which) -> showDebugConfigOutput(suggestionsList));
         }
         alert03.show();
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void showDebugConfigOutput(final List<WifiNetworkSuggestion> suggestionsList){
         TextView showText = new TextView(this);
         String st = debugConfigOutput;
@@ -865,16 +816,13 @@ public class MainActivity extends Activity {
         alert04.setTitle("Debug Output");
         alert04.setView(showText);
         alert04.setPositiveButton(mess,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        alertDialogAfterAPI29(suggestionsList);
-                    }
-        });
+                (dialog, which) -> alertDialogAfterAPI29(suggestionsList));
         alert04.show();
     }
 
 
     // Alert Dialog for API 29 Part 2
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void howToDialogAfterAPI29(final List<WifiNetworkSuggestion> suggestionsList) {
         StringBuilder sb = new StringBuilder();
         sb.append("If you want to forget the WiFi network:");
@@ -890,23 +838,18 @@ public class MainActivity extends Activity {
         alert05.setCancelable(false);
         alert05.setTitle("IMPORTANT NOTES:");
         alert05.setMessage(sb);
-        alert05.setNegativeButton("OK, I've got it. Let's GO!",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        showInBox("You will now be redirected to the wifi configuration");
-                        enableWifiConfiguration(suggestionsList);
-                    }
-                });
+        alert05.setNegativeButton("OK, I've got it. Let's GO!", (dialog, which) -> {
+            showInBox("You will now be redirected to the wifi configuration");
+            enableWifiConfiguration(suggestionsList);
+        });
         alert05.setPositiveButton("Previous",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        alertDialogAfterAPI29(suggestionsList);
-                    }
-                });
+                (dialog, which) -> alertDialogAfterAPI29(suggestionsList));
         alert05.show();
     }
 
     // Configure WPA2TLS Before API 29
+    // Lint flags WifiEnterpriseConfig as API 18+; in practice the API is usable on 14-28.
+    @SuppressLint("NewApi")
     public void configureWPA2TLSBeforeAPI29() {
         addTodebugConfigOutput("=== configureWPA2TLSBeforeAPI29 ===");
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
@@ -993,19 +936,18 @@ public class MainActivity extends Activity {
             alert07.setMessage("Enter password for " + MainActivity.this.tlsUsername);
         }
         alert07.setView(input);
-        alert07.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                MainActivity.this.password = input.getText().toString();
-                if (MainActivity.this.api_version >= 29) {
-                    configureWPA2PEAPAfterAPI29();
-                } else {
-                    configureWPA2PEAPBeforeAPI29();
-                }
+        alert07.setPositiveButton("Ok", (dialog, whichButton) -> {
+            MainActivity.this.password = input.getText().toString();
+            if (Build.VERSION.SDK_INT >= 29) {
+                configureWPA2PEAPAfterAPI29();
+            } else {
+                configureWPA2PEAPBeforeAPI29();
             }
         });
         alert07.show();
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void configureWPA2PEAPAfterAPI29() {
         addTodebugConfigOutput("=== configureWPA2PEAPAfterAPI29 ===");
         WifiEnterpriseConfig mEnterpriseConfig = new WifiEnterpriseConfig();
@@ -1029,7 +971,7 @@ public class MainActivity extends Activity {
                 .setPriority(100)
                 .build();
 
-        if (MainActivity.this.api_version >= 31) {
+        if (Build.VERSION.SDK_INT >= 31) {
             suggestionTmp = new WifiNetworkSuggestion.Builder()
                     .setSsid(MainActivity.this.ssid)
                     .setWpa2EnterpriseConfig(mEnterpriseConfig)
@@ -1045,6 +987,8 @@ public class MainActivity extends Activity {
         alertDialogAfterAPI29(suggestionsList);
     }
 
+    // Lint flags WifiEnterpriseConfig as API 18+; in practice the API is usable on 14-28.
+    @SuppressLint("NewApi")
     public void configureWPA2PEAPBeforeAPI29() {
         addTodebugConfigOutput("=== configureWPA2PEAPBeforeAPI29 ===");
         addTodebugConfigOutput("Configuring " + MainActivity.this.ssid +
@@ -1092,13 +1036,14 @@ public class MainActivity extends Activity {
     /* WPAPSK */
     public void configureWirelessConnectionWPAPSK() {
         addTodebugConfigOutput("=== configureWirelessConnectionWPAPSK ===");
-        if (MainActivity.this.api_version >= 29) {
+        if (Build.VERSION.SDK_INT >= 29) {
             configureWPAPSKAfterAPI29();
         } else {
             configureWPAPSKBeforeAPI29();
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void configureWPAPSKAfterAPI29() {
         addTodebugConfigOutput("=== configureWPAPSKAfterAPI29 ===");
         final WifiNetworkSuggestion suggestion = new WifiNetworkSuggestion.Builder()
@@ -1136,13 +1081,14 @@ public class MainActivity extends Activity {
     /* Clear CONFIGURATION */
     public void clearConfiguration() {
         addTodebugConfigOutput("=== clearConfiguration ===");
-        if (MainActivity.this.api_version >= 29) {
+        if (Build.VERSION.SDK_INT >= 29) {
             clearConfigurationAfterAPI29();
         } else {
             clearConfigurationBeforeAPI29();
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void clearConfigurationAfterAPI29() {
         addTodebugConfigOutput("=== clearConfigurationAfterAPI29 ===");
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -1163,7 +1109,16 @@ public class MainActivity extends Activity {
         addTodebugConfigOutput("=== clearConfigurationBeforeAPI29 ===");
         List<WifiConfiguration> currentConfigurations;
         WifiManager manager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(WIFI_SERVICE);
-        currentConfigurations = manager.getConfiguredNetworks();
+        try {
+            currentConfigurations = manager.getConfiguredNetworks();
+        } catch (SecurityException e) {
+            addTodebugConfigOutput("Permission denied accessing wifi configurations: " + e.getMessage());
+            return;
+        }
+        if (currentConfigurations == null) {
+            addTodebugConfigOutput("No wifi configurations available (permission may be denied).");
+            return;
+        }
 
         for (WifiConfiguration currentConfiguration : currentConfigurations) {
             if (currentConfiguration.SSID.compareToIgnoreCase(MainActivity.this.ssid) == 0) {
@@ -1176,6 +1131,7 @@ public class MainActivity extends Activity {
 
     /* ENABLE CONFIGURATION */
     @Deprecated
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void preparePostSuggestion() {
         addTodebugConfigOutput("=== preparePostSuggestion ===");
         BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -1197,6 +1153,7 @@ public class MainActivity extends Activity {
         MainActivity.this.unregisterReceiver(MainActivity.this.broadcastReceiver);
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     public void enableWifiConfiguration(List<WifiNetworkSuggestion> suggestionsList) {
         addTodebugConfigOutput("=== enableWifiConfiguration ===");
         WifiManager wifiManager = (WifiManager) MainActivity.this.getApplicationContext().getSystemService(Context.WIFI_SERVICE);

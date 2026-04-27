@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>SSID_STR</key>
+            <string>PacketFence-PEAP</string>
+            <key>EncryptionType</key>
+            <string>WPA</string>
+            <key>EAPClientConfiguration</key>
+            <dict>
+                <key>AcceptEAPTypes</key>
+                <array>
+                    <integer>25</integer>
+                </array>
+                <key>UserName</key>
+                <string>peap-user</string>
+            </dict>
+        </dict>
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.security.radius.ca</string>
+            <key>PayloadContent</key>
+            <string>MIICpDCCAYwCCQDU+pQ4pHgSpDANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQDDAlU
+ZXN0IENBMB4XDTIzMDEwMTAwMDAwMFoXDTI0MDEwMTAwMDAwMFowFDESMBAGA1UE
+AwwJVGVzdCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBATestCA==</string>
+            <key>PayloadDisplayName</key>
+            <string>Radius CA</string>
+        </dict>
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.security.root</string>
+            <key>PayloadCertificateFileName</key>
+            <string>radius.example.com</string>
+        </dict>
+    </array>
+    <key>PayloadDisplayName</key>
+    <string>PacketFence PEAP Profile</string>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+</dict>
+</plist>

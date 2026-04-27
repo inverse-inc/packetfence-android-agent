@@ -4,5 +4,10 @@
     <string name="app_name">PacketFence Agent</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="please_wait_configuring">Please wait\nNow Configuring...</string>
+    <string name="button_configure">Configure</string>
+    <string name="button_exit">Exit</string>
+    <string name="button_debug">Debug</string>
+    <string name="debug_warning">Debug enabled — Caution:\nDebug mode may expose Wi-Fi credentials and certificate data in plain text on this screen.\nUse only for troubleshooting before sharing.</string>
 
 </resources>
