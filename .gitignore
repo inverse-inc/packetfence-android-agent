@@ -4,6 +4,7 @@ build
 release
 .DS_Store
 .gradle/
+.gradle-cache/
 *.apk
 local.properties
 *.iml

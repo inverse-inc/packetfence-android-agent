@@ -20,7 +20,7 @@ buildscript {
      */
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.4.2'
+        classpath 'com.android.tools.build:gradle:8.13.2'
     }
 }
 
@@ -74,7 +74,7 @@ android {
         targetSdkVersion 36
 
         // Defines the version number of your app.
-        versionCode 20
+        versionCode 21
 
         // Defines a user-friendly version name for your app.
         versionName "2.7.0"
@@ -166,8 +166,12 @@ android {
         unitTests.returnDefaultValues = true
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
     namespace 'org.packetfence.agent'
-    buildToolsVersion '34.0.0'
 }
 
 /**
@@ -178,6 +182,7 @@ android {
 dependencies {
     //implementation project(":libs")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.volley:volley:1.2.1'
     implementation 'androidx.annotation:annotation:1.8.0'
 
     // Host JVM unit-test dependencies (characterisation tests, Plan 03 blocker)
