@@ -178,6 +178,7 @@ android {
 dependencies {
     //implementation project(":libs")
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.volley:volley:1.2.1'
     implementation 'androidx.annotation:annotation:1.8.0'
 
     // Host JVM unit-test dependencies (characterisation tests, Plan 03 blocker)
