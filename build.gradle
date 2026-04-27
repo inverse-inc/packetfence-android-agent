@@ -167,7 +167,6 @@ android {
     }
 
     namespace 'org.packetfence.agent'
-    buildToolsVersion '34.0.0'
 }
 
 /**
